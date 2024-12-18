@@ -1,0 +1,12 @@
+{
+    "name": "frontend",
+    "targets": {
+      "serve": {
+        "executor": "@nx/next:server",
+        "defaultConfiguration": "development",
+        "options": {
+          "buildTarget": "frontend:dev"
+        }
+      }
+    }
+  }

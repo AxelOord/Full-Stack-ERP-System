@@ -1,0 +1,25 @@
+{
+  "name": "@jeeo-v2-prototype/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nx run frontend:serve backend:serve --verbose"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "20.2.2",
+    "@nx/next": "^20.2.2",
+    "@nx/storybook": "^20.2.2",
+    "@nx/web": "20.2.2",
+    "@nx/webpack": "^20.2.2",
+    "@nx/workspace": "^20.2.2",
+    "nx": "20.2.2",
+    "openapi-zod-client": "^1.18.2",
+    "storybook": "^8.4.6"
+  },
+  "dependencies": {
+    "next": "14.2.16",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

@@ -1,6 +1,0 @@
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.AssemblyInfoInputs.cache
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.AssemblyInfo.cs
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.csproj.CoreCompileInputs.cache
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.sourcelink.json
-C:\Users\a.oord\source\repos\jeeo-v2-prototype\jeeo-v2-prototype\apps\api\Persistence\obj\Debug\net9.0\Persistence.csproj.AssemblyReference.cache

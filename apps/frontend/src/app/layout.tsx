@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import { RefreshProvider, useRefresh } from "@/context/refresh-context";
+import { RefreshProvider } from "@/context/refresh-context";
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   Breadcrumb,

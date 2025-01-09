@@ -1,5 +1,5 @@
 import * as React from "react"
-import { RotateCw, Send, type LucideIcon } from "lucide-react"
+import { RotateCw, Send } from "lucide-react"
 
 import {
   SidebarGroup,

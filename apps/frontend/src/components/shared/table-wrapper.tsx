@@ -10,7 +10,7 @@ interface TableWrapperProps<T> {
   searchByTerm?: (searchTerm: string) => Promise<Response<T>>;
 }
 
-export default function TableWrapper<T extends Object>({
+export default function TableWrapper<T extends object>({
   fetchInitialData,
   searchByTerm
 }: TableWrapperProps<T>) {

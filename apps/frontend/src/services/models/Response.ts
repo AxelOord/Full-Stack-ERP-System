@@ -11,4 +11,3 @@ export type Response<T> = {
     metadata: Metadata;
     message?: string | null;
 };
-

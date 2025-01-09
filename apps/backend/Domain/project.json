@@ -1,0 +1,14 @@
+{
+    "name": "Domain",
+    "root": "apps/backend/Domain",
+    "projectType": "application",
+    "targets": {
+        "serve": {
+            "executor": "@nx-dotnet/core:serve",
+            "options": {
+                "launch-profile": "https",
+                "verbosity": "quiet"
+            }
+        }
+    }
+}

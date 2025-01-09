@@ -445,3 +445,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+.nx/installation

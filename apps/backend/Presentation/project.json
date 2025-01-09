@@ -1,0 +1,14 @@
+{
+    "name": "Api",
+    "root": "apps/backend/Presentation",
+    "projectType": "application",
+    "targets": {
+        "serve": {
+            "executor": "@nx-dotnet/core:serve",
+            "options": {
+                "launch-profile": "https",
+                "verbosity": "quiet"
+            }
+        }
+    }
+}

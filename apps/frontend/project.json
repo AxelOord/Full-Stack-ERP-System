@@ -1,12 +1,37 @@
 {
-    "name": "frontend",
+    "name": "Frontend",
+    "root": "apps/frontend",
+    "implicitDependencies": ["Api"],
+    "sourceRoot": "apps/frontend/src",
+    "projectType": "application",
     "targets": {
+      "build": {
+        "executor": "@nx/next:build",
+        "options": {
+          "outputPath": "dist/apps/frontend"
+        },
+        "configurations": {
+          "production": {}
+        }
+      },
       "serve": {
         "executor": "@nx/next:server",
-        "defaultConfiguration": "development",
         "options": {
-          "buildTarget": "frontend:dev"
+          "buildTarget": "Frontend:build"
+        }
+      },
+      "lint": {
+        "executor": "@nx/linter:eslint",
+        "options": {
+          "lintFilePatterns": ["apps/frontend/**/*.ts", "apps/frontend/**/*.tsx"]
+        }
+      },
+      "test": {
+        "executor": "@nx/jest:jest",
+        "options": {
+          "jestConfig": "apps/frontend/jest.config.ts",
+          "passWithNoTests": true
         }
       }
     }
-  }
+  }  

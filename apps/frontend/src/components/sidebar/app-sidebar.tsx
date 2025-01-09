@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   BookOpen,
-  Command,
   Package,
   User,
   ClipboardList,

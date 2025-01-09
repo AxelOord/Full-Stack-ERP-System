@@ -12,11 +12,11 @@ const fetchInitialArticles = async (): Promise<Response<ArticleDto>> => {
 
   // Now fetch the articles
   console.log("fetching articles");
-  return await ArticlesService.getApiArticles1(1, 50);
+  return await ArticlesService.getApiArticles1(1, 25);
 };
 
 const searchArticles = async (searchTerm: string): Promise<Response<ArticleDto>> => {
-  return await ArticlesService.getApiArticles1(undefined, 50, "articleNumber", searchTerm);
+  return await ArticlesService.getApiArticles1(undefined, 25, "articleNumber", searchTerm);
 };
 
 export default function Page() {

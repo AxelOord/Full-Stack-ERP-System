@@ -10,7 +10,7 @@ import InputSearch from "./input-search"
 import { Table } from '@tanstack/react-table';
 
 interface TableToolbarProps {
-    table: Table<any>;
+    table: Table<object>;
     onInputChange: (searchTerm: string) => void;
   }
 

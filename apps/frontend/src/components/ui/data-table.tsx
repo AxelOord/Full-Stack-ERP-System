@@ -66,7 +66,7 @@ export function DataTable<T extends object>({
 
   const columnsMemo = useMemo(
     () => (isLoading ? loadingColumns : createColumns<T>(result?.metadata.columns || [])),
-    [isLoading, result?.metadata.columns]
+    [isLoading, result?.metadata.columns, loadingColumns]
   );
 
   const table = useReactTable({

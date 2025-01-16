@@ -1,5 +1,5 @@
 using AutoMapper;
-using Domain.Primitives;
+using Domain.Primitives.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
@@ -17,10 +17,10 @@ namespace Domain.Shared.ApiResponse
         public required T Attributes { get; set; }
 
         [JsonPropertyName("links")]
-        public ApiLinks? Links { get; set; }
+        public required AttributeLinks Links { get; set; }
 
         public static ApiData<TDestination> CreateApiData<TSource, TDestination>(TSource entity, IMapper mapper, LinkBuilder linkBuilder, HttpRequest request)
-         where TSource : Entity
+         where TSource : IEntity
         {
             return new ApiData<TDestination>
             {

@@ -1,12 +1,13 @@
-﻿using AutoMapper;
-using Api.Infrastructure;
+using AutoMapper;
 using Domain.Shared.ApiResponse;
-using Domain.Organizations;
+using Infrastructure;
+using Domain.Organizations.Suppliers;
+using Domain.Organizations.Suppliers.Dtos;
 
 
-namespace Api.Controllers
+namespace Presentation.Controllers
 {
-    public class SuppliersController(IServiceFactory serviceFactory, IMapper mapper, LinkBuilder linkBuilder) : BaseController<Supplier, SupplierDto>(serviceFactory, mapper, linkBuilder)
+  public class SuppliersController(IServiceFactory serviceFactory, IMapper mapper, LinkBuilder linkBuilder) : BaseController<Supplier, SupplierDto>(serviceFactory, mapper, linkBuilder)
     {
     }
 }

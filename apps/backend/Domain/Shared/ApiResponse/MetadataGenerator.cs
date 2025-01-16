@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace Domain.Shared.ApiResponse
 {
@@ -7,13 +7,13 @@ namespace Domain.Shared.ApiResponse
         public static Metadata GenerateMetadata<T>()
         {
             var metadata = new Metadata();
-            var columns = new List<Metadata.Column>();
+            var columns = new List<Column>();
 
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             foreach (var prop in properties)
             {
-                var column = new Metadata.Column
+                var column = new Column
                 {
                     Field = $"{char.ToLowerInvariant(prop.Name[0])}{prop.Name[1..]}"
                 };

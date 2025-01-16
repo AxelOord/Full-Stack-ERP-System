@@ -1,10 +1,10 @@
-﻿namespace Domain.Shared.ApiResponse
+namespace Domain.Shared.ApiResponse
 {
     public class Column
     {
-        public required string Field { get; set; }
-        public required string Label { get; set; }
-        public required string Type { get; set; }
-        public required bool Sortable { get; set; }
+      public string? Field { get; set; }
+      public string? Key { get; set; }
+      public string? Type { get; set; }
+      public bool? Sortable { get; set; }
     }
 }

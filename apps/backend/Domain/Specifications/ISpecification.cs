@@ -1,10 +1,10 @@
-﻿using Domain.Primitives;
+using Domain.Primitives.Interfaces;
 using System.Linq.Expressions;
 
 namespace Domain.Specifications
 {
     public interface ISpecification<TEntity>
-        where TEntity : Entity, new()
+        where TEntity : IEntity
     {
         Expression<Func<TEntity, bool>> Criteria { get; }
 

@@ -1,8 +1,8 @@
-﻿using Domain.Primitives;
+using Domain.Primitives.Interfaces;
 using System.Linq.Expressions;
 namespace Domain.Specifications
 {
-    public class GetAllEntitiesSpecification<TEntity> : Specification<TEntity> where TEntity : Entity, new()
+    public class GetAllEntitiesSpecification<TEntity> : Specification<TEntity> where TEntity : IEntity
     {
         public GetAllEntitiesSpecification(
             GetAllQueryParameters queryParameters)

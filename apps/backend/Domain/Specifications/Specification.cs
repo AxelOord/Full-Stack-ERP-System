@@ -1,10 +1,10 @@
-﻿using Domain.Primitives;
+using Domain.Primitives.Interfaces;
 using System.Linq.Expressions;
 
 namespace Domain.Specifications
 {
     public abstract class Specification<TEntity> : ISpecification<TEntity>
-        where TEntity : Entity, new()
+        where TEntity : IEntity
     {
         public Expression<Func<TEntity, bool>> Criteria { get; protected set; } = x => true;
         public List<SortOrder<TEntity>> OrderBy { get; } = [];

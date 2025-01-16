@@ -2,10 +2,9 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Scalar.AspNetCore;
 using Persistence;
-using Api;
-using Api.Infrastructure;
 using Domain.Shared.ApiResponse;
 using System.Text.Json.Serialization;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

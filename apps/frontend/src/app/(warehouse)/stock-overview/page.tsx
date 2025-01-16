@@ -5,10 +5,10 @@ import { useRefresh } from "@/context/refresh-context";
 
 const fetchInitialArticles = async (): Promise<Response<ArticleDto>> => {
   // Create a delay function
-  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  //const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   // Wait for the delay
-  await delay(3000);
+  //await delay(3000);
 
   // Now fetch the articles
   console.log("fetching articles");

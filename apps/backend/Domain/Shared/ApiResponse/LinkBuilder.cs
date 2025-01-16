@@ -1,24 +1,17 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 namespace Domain.Shared.ApiResponse
 {
-    public class LinkBuilder(LinkGenerator linkGenerator, IHttpContextAccessor httpContextAccessor)
+    public class LinkBuilder()
     {
-        private readonly LinkGenerator _linkGenerator = linkGenerator;
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-
         // TODO: should be a global setting or something
         private const int DefaultPageNumber = 1;
         private const int DefaultPageSize = 10;
 
-        public ApiLinks CreatePaginationLinks(string routeName, HttpRequest request, int resultCount)
+        public PaginationLinks CreatePaginationLinks(string routeName, HttpRequest request, int resultCount)
         {
             ArgumentNullException.ThrowIfNull(routeName);
             ArgumentNullException.ThrowIfNull(request);
-
-            var httpContext = _httpContextAccessor.HttpContext
-                ?? throw new InvalidOperationException("No current HttpContext is available.");
 
             int currentPage = ParseQueryParam(request, "pageNumber", DefaultPageNumber);
             int pageSize = ParseQueryParam(request, "pageSize", DefaultPageSize);
@@ -61,7 +54,7 @@ namespace Domain.Shared.ApiResponse
                 : $"{request.Scheme}://{request.Host}{routeName}?{GenerateQueryString(routeParams)}";
 
 
-            return new ApiLinks
+            return new PaginationLinks
             {
                 Self = self,
                 Next = next,
@@ -69,12 +62,12 @@ namespace Domain.Shared.ApiResponse
             };
         }
 
-        public ApiLinks CreateDtoLinks(HttpRequest request, string type, Guid id)
+        public AttributeLinks CreateDtoLinks(HttpRequest request, string type, Guid id)
         {
             // FIXME: doesnt work
             var self = $"{request.Scheme}://{request.Host}{request.Path}/{id}";
 
-            return new ApiLinks
+            return new AttributeLinks
             {
                 Self = self
             };

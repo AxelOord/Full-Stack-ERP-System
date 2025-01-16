@@ -1,11 +1,11 @@
-﻿using Application.Generics.Messaging.Commands;
-using Domain.Primitives;
+using Application.Generics.Messaging.Commands;
+using Domain.Primitives.Interfaces;
 using Domain.Shared;
 
 namespace Application.Generics.Delete
 {
     public class DeleteCommandHandler<TEntity> : ICommandHandler<DeleteCommand<TEntity>>
-        where TEntity : Entity, new()
+        where TEntity : IEntity, new()
     {
 
         private readonly IDeleteService<TEntity> _deleteService;

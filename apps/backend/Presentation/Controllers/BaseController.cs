@@ -1,22 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Application.Generics.Create;
 using Domain.Primitives;
 using Application.Generics.Delete;
-using Api.Infrastructure;
 using Domain.Specifications;
 using Domain.Shared.ApiResponse;
 using Application.Generics.GetAll;
 using Application.Generics.GetById;
 using Api.Extensions;
+using Infrastructure;
+using Domain.Primitives.Interfaces;
 
-namespace Api.Controllers
+namespace Presentation.Controllers
 {
-    [ApiController]
+  [ApiController]
     [Route("api/[controller]")]
     public abstract class BaseController<TEntity, TDto>(IServiceFactory serviceFactory, IMapper mapper, LinkBuilder linkBuilder) : ControllerBase
-        where TEntity : Entity, new()
-        where TDto : Dto
+        where TEntity : class, IEntity, ICreatableFromDto<TEntity, TDto>
+        where TDto : IDto
     {
         private readonly IGetByIdService<TEntity> _getByIdService = serviceFactory.GetGetByIdService<TEntity>();
         private readonly IGetAllService<TEntity> _getAllService = serviceFactory.GetGetAllService<TEntity>();
@@ -48,7 +49,7 @@ namespace Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Response<TDto>>> GetAllAsync([FromQuery] GetAllQueryParameters queryParameters, CancellationToken cancellationToken)
+        public async Task<ActionResult<PaginatedResponse<TDto>>> GetAllAsync([FromQuery] GetAllQueryParameters queryParameters, CancellationToken cancellationToken)
         {
             var specification = new GetAllEntitiesSpecification<TEntity>(queryParameters);
 

@@ -1,13 +1,14 @@
-﻿using Application.Generics.Messaging.Commands;
+using Application.Generics.Messaging.Commands;
 using Domain.Primitives;
+using Domain.Primitives.Interfaces;
 using Domain.Shared;
 
 namespace Application.Generics.Create
 {
-    public class CreateCommandHandler<TDto, TEntity> : ICommandHandler<CreateCommand<TDto, TEntity>>
-        where TDto : Dto
-        where TEntity : Entity, new()
-    {
+  public class CreateCommandHandler<TDto, TEntity> : ICommandHandler<CreateCommand<TDto, TEntity>>
+        where TDto : IDto
+        where TEntity : class, IEntity, ICreatableFromDto<TEntity, TDto>
+  {
 
         private readonly ICreateService<TDto, TEntity> _createService;
 

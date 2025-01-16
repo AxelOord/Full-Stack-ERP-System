@@ -1,9 +1,11 @@
-﻿namespace Domain.Primitives.Interfaces
+using System.Runtime.InteropServices;
+
+namespace Domain.Primitives.Interfaces
 {
-    public class IEntity
+    public interface IEntity
     {
-        Guid Id { get; set; }
-        DateTime InsertDate { get; set; }
-        DateTime UpdateDate { get; set; }
-    }
+        Guid Id { get; }
+        DateTime InsertDate { get;  }
+        DateTime UpdateDate { get; }
+  }
 }

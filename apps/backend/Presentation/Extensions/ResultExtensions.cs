@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Domain.Shared;
 using AutoMapper;
 using Domain.Shared.ApiResponse;
+using Azure;
+using Domain.Primitives.Interfaces;
 
 namespace Api.Extensions
 {
-    public static class ResultExtensions
+  public static class ResultExtensions
     {
 
         public static ActionResult ToActionResult(this Result result)
@@ -32,13 +34,15 @@ namespace Api.Extensions
             return new ObjectResult(error.GetProblemDetails()) { StatusCode = error.GetStatusCode() };
         }
 
-        public static ActionResult<Response<TDestination>> ToActionResult<TSource, TDestination>(
+        public static ActionResult<TResponse> ToActionResult<TSource, TDestination, TResponse>(
             this Result<TSource> result,
             IMapper mapper,
-            IResultMapper<TSource, TDestination> mapperStrategy,
+            IResultMapper<TSource, TDestination, TResponse> mapperStrategy,
             LinkBuilder linkBuilder,
             HttpRequest req)
             where TSource : class
+            where TDestination : IDto
+            where TResponse : class, IResponse<TDestination>
         {
             if (!result.IsSuccess)
             {
@@ -46,20 +50,9 @@ namespace Api.Extensions
                 return new ObjectResult(error.GetProblemDetails()) { StatusCode = error.GetStatusCode() };
             }
 
-            var apiDataList = mapperStrategy.Map(result, mapper, linkBuilder, req);
+            var response = mapperStrategy.Map(result, mapper, linkBuilder, req);
 
-            var response = new Response<TDestination>
-            {
-                Links = linkBuilder?.CreatePaginationLinks(
-                    routeName: req.Path,
-                    request: req,
-                    resultCount: apiDataList.Count
-                ),
-                Data = apiDataList,
-                Metadata = MetadataGenerator.GenerateMetadata<TDestination>()
-            };
-
-            return new ActionResult<Response<TDestination>>(response);
+            return new ActionResult<TResponse>(response);
         }
-    }
+  }
 }

@@ -16,7 +16,7 @@ namespace Persistence.Persistence.Articles
 
       builder.HasOne(a => a.Supplier)
           .WithMany()
-          .HasForeignKey(a => a.Supplier.Id)
+          .HasForeignKey(a => a.SupplierId)
           .IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
     }

@@ -15,4 +15,10 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Organizations\" />
+    <Folder Include="Warehouse\Articles\Queries\" />
+    <Folder Include="Warehouse\Suppliers\Commands\" />
+  </ItemGroup>
+
 </Project>

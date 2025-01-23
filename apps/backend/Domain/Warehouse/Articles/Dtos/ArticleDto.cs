@@ -20,9 +20,5 @@ namespace Domain.Warehouse.Article.Dto
     [TranslationKey("COLUMN_NAME_IS_ACTIVE")]
     [Sortable]
     public bool IsActive { get; set; }
-
-    [TranslationKey("COLUMN_NAME_SUPPLIER")]
-    [Sortable]
-    public SupplierDto? Supplier { get; set; }
   }
 }

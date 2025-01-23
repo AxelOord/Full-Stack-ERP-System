@@ -3,7 +3,7 @@ using Domain.Organizations.Suppliers;
 using Domain.Primitives;
 using Domain.Shared;
 
-namespace Application.Organizations.Suppliers.GetByName
+namespace Application.Warehouse.Suppliers.Queries.GetByName
 {
   public interface IGetByNameService
   {

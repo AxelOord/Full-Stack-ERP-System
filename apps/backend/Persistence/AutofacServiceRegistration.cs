@@ -1,12 +1,16 @@
-using Application.Generics.Create;
 using Application.Generics.Delete;
 using Application.Generics.GetAll;
 using Application.Generics.GetById;
+using Application.Warehouse.Articles.Commands.CreateArticle;
+using Application.Warehouse.Suppliers;
 using Autofac;
 using Infrastructure;
+using Infrastructure.Persistence.Articles;
 using Infrastructure.Persistence.Generics.Commands;
 using Infrastructure.Persistence.Generics.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Persistence.Persistence.Suppliers;
 using System.Reflection;
 
 namespace Persistence
@@ -31,24 +35,28 @@ namespace Persistence
                 .As(typeof(IGetAllService<>))
                 .InstancePerDependency();
 
-            containerBuilder.RegisterGeneric(typeof(CreateService<,>))
-                .As(typeof(ICreateService<,>))
-                .InstancePerDependency();
-
             containerBuilder.RegisterGeneric(typeof(DeleteService<>))
                 .As(typeof(IDeleteService<>))
                 .InstancePerDependency();
 
-            containerBuilder.RegisterType<ServiceFactory>()
+            containerBuilder.RegisterType<CreateArticleService>()
+                .As<ICreateArticleService>()
+                .InstancePerDependency();
+
+      containerBuilder.RegisterType<ServiceFactory>()
                 .As<IServiceFactory>()
                 .InstancePerLifetimeScope();
 
-            //containerBuilder.RegisterGeneric(typeof(DeleteCommandHandler<>))
-            //    .As(typeof(IRequestHandler<,>))
-            //    .InstancePerDependency();
+            containerBuilder.RegisterType<SupplierRepository>()
+               .As<ISupplierRepository>()
+               .InstancePerLifetimeScope();
 
-            // Register additional pipeline behaviors if 
-            //containerBuilder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
-        }
+      //containerBuilder.RegisterGeneric(typeof(DeleteCommandHandler<>))
+      //    .As(typeof(IRequestHandler<,>))
+      //    .InstancePerDependency();
+
+      // Register additional pipeline behaviors if 
+      //containerBuilder.RegisterGeneric(typeof(RequestPreProcessorBehavior<,>)).As(typeof(IPipelineBehavior<,>));
+    }
     }
 }

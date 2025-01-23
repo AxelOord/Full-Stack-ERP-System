@@ -1,5 +1,5 @@
 using Application.Generics.GetById;
-using Application.Organizations.Suppliers.GetByName;
+using Application.Warehouse.Suppliers.Queries.GetByName;
 using Domain.Organizations.Suppliers;
 using Domain.Shared;
 using Infrastructure.Persistence;

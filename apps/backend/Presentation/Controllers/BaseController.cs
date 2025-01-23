@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Application.Generics.Create;
-using Domain.Primitives;
 using Application.Generics.Delete;
 using Domain.Specifications;
 using Domain.Shared.ApiResponse;
@@ -10,21 +8,23 @@ using Application.Generics.GetById;
 using Api.Extensions;
 using Infrastructure;
 using Domain.Primitives.Interfaces;
+using MediatR;
 
 namespace Presentation.Controllers
 {
-  [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
-    public abstract class BaseController<TEntity, TDto>(IServiceFactory serviceFactory, IMapper mapper, LinkBuilder linkBuilder) : ControllerBase
+    public abstract class BaseController<TEntity, TDto>(IServiceFactory serviceFactory, IMapper mapper, LinkBuilder linkBuilder, IMediator mediator) : ControllerBase
         where TEntity : class, IEntity, ICreatableFromDto<TEntity, TDto>
         where TDto : IDto
     {
+        internal readonly IMediator _mediator = mediator;
+        internal readonly IMapper _mapper = mapper;
+        internal readonly LinkBuilder _linkBuilder = linkBuilder; // no Interface defuq?
+
         private readonly IGetByIdService<TEntity> _getByIdService = serviceFactory.GetGetByIdService<TEntity>();
         private readonly IGetAllService<TEntity> _getAllService = serviceFactory.GetGetAllService<TEntity>();
-        private readonly ICreateService<TDto, TEntity> _createService = serviceFactory.GetCreateService<TDto, TEntity>();
         private readonly IDeleteService<TEntity> _deleteService = serviceFactory.GetDeleteService<TEntity>();
-        private readonly IMapper _mapper = mapper;
-        private readonly LinkBuilder _linkBuilder = linkBuilder;
 
         /// <summary>
         /// Get entity by  id
@@ -58,20 +58,6 @@ namespace Presentation.Controllers
             var mapperStrategy = new CollectionEntityMapper<TEntity, TDto>();
 
             return result.ToActionResult(_mapper, mapperStrategy, _linkBuilder, Request);
-        }
-
-        /// <summary>
-        /// Create entity
-        /// </summary>
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] TDto? dto, CancellationToken cancellationToken)
-        {
-            var command = new CreateCommand<TDto, TEntity>(dto!);
-            var result = await _createService.ExecuteAsync(command, cancellationToken);
-
-            return result.ToActionResult(StatusCodes.Status201Created);
         }
 
         /// <summary>

@@ -5,6 +5,8 @@ using Persistence;
 using Domain.Shared.ApiResponse;
 using System.Text.Json.Serialization;
 using Infrastructure;
+using Microsoft.AspNetCore.Hosting;
+using Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,7 @@ builder.Services.AddCors(options =>
 // Register persistence services and other non-Autofac services
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddOpenApi();
+builder.Services.AddMediatR();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

@@ -20,14 +20,14 @@ import {
 } from "@/components/ui/table"
 import React, { useMemo } from "react"
 import { createColumns } from "./columns"
-import { ApiData, Response } from "@/services";
+import { ApiData, PaginatedResponse } from "@/services";
 import { Skeleton } from "./skeleton"
 import Loader from "../shared/loader"
 import TableToolbar from "./table-toolbar"
 import Pagination from "./pagination"
 
 interface DataTableProps<T> {
-  result: Response<T> | null;
+  result: PaginatedResponse<T> | null;
   hasNextPage: boolean;
   hasPrevPage: boolean;
   onNextPage: () => void;
@@ -58,19 +58,19 @@ export function DataTable<T extends object>({
     [isLoading, result]
   );
 
-  const loadingColumns: ColumnDef<ApiData<T>>[] = Array(3).fill(null).map((_, index) => ({
+  const loadingColumns: ColumnDef<ApiData<T>>[] = Array(4).fill(null).map((_, index) => ({
     id: `loading-${index}`,
     header: () => <Skeleton className="h-4 w-20" />,
     cell: () => <Skeleton className="h-4 w-80" />,
   }));
 
   const columnsMemo = useMemo(
-    () => (isLoading ? loadingColumns : createColumns<T>(result?.metadata.columns || [])),
-    [isLoading, result?.metadata.columns, loadingColumns]
+    () => (isLoading ? loadingColumns : createColumns<T>(result?.metadata?.columns || [])),
+    [isLoading, result?.metadata?.columns, loadingColumns]
   );
 
   const table = useReactTable({
-    data: tableData,
+    data: tableData || [],
     columns: columnsMemo,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

@@ -28,6 +28,10 @@
           }
         }
       }
+    },
+    {
+      "plugin": "@nx-tools/nx-container",
+      "options": {}
     }
   ],
   "targetDefaults": {

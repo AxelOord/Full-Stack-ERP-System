@@ -1,9 +1,9 @@
 "use client"
 import TableWrapper from "@/components/shared/table-wrapper";
-import { ArticleDto, ArticlesService, Response } from "@/services";
+import { ArticleDto, ArticlesService, PaginatedResponse } from "@/services";
 import { useRefresh } from "@/context/refresh-context";
 
-const fetchInitialArticles = async (): Promise<Response<ArticleDto>> => {
+const fetchInitialArticles = async (): Promise<PaginatedResponse<ArticleDto>> => {
   // Create a delay function
   //const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -12,11 +12,11 @@ const fetchInitialArticles = async (): Promise<Response<ArticleDto>> => {
 
   // Now fetch the articles
   console.log("fetching articles");
-  return await ArticlesService.getApiArticles1(1, 25);
+  return await ArticlesService.getApiArticles(1, 25);
 };
 
-const searchArticles = async (searchTerm: string): Promise<Response<ArticleDto>> => {
-  return await ArticlesService.getApiArticles1(undefined, 25, "articleNumber", searchTerm);
+const searchArticles = async (searchTerm: string): Promise<PaginatedResponse<ArticleDto>> => {
+  return await ArticlesService.getApiArticles(undefined, 25, "articleNumber", searchTerm);
 };
 
 export default function Page() {

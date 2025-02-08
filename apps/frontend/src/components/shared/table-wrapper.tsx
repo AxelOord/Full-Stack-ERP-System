@@ -2,23 +2,23 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { Response } from "@/services";
+import { PaginatedResponse } from "@/services";
 import { requestFromUrl as __request } from '@/services/core/request';
 
 interface TableWrapperProps<T> {
-  fetchInitialData: () => Promise<Response<T>>;
-  searchByTerm?: (searchTerm: string) => Promise<Response<T>>;
+  fetchInitialData: () => Promise<PaginatedResponse<T>>;
+  searchByTerm?: (searchTerm: string) => Promise<PaginatedResponse<T>>;
 }
 
 export default function TableWrapper<T extends object>({
   fetchInitialData,
   searchByTerm
 }: TableWrapperProps<T>) {
-  const [data, setData] = useState<Response<T> | null>(null);
+  const [data, setData] = useState<PaginatedResponse<T> | null>(null);
 
   const fetchData = useCallback(
     async (link?: string | null) => {
-      const response = link ? await __request<Response<T>>(link) : await fetchInitialData();
+      const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchInitialData();
       setData(response);
     },
     [fetchInitialData]

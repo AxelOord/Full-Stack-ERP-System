@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Presentation\Presentation.csproj" />
+    <ProjectReference Include="..\Application\Warehouse.Application.csproj" />
+    <ProjectReference Include="..\Domain\Warehouse.Domain.csproj" />
+    <ProjectReference Include="..\Persistence\Warehouse.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

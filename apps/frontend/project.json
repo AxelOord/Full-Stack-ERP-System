@@ -1,7 +1,7 @@
 {
-    "name": "Frontend",
+    "name": "frontend",
     "root": "apps/frontend",
-    "implicitDependencies": ["Api"],
+    "implicitDependencies": ["api"],
     "sourceRoot": "apps/frontend/src",
     "projectType": "application",
     "targets": {
@@ -17,7 +17,7 @@
       "serve": {
         "executor": "@nx/next:server",
         "options": {
-          "buildTarget": "Frontend:build"
+          "buildTarget": "frontend:build"
         }
       },
       "lint": {

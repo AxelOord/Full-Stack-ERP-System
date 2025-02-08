@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { PaginatedResponse } from '../models/PaginatedResponse';
 import type { Response } from '../models/Response';
 import type { SupplierDto } from '../models/SupplierDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -56,7 +57,7 @@ export class SuppliersService {
      * @param filterValue
      * @param orderBy
      * @param isDescending
-     * @returns Response<SupplierDto> OK
+     * @returns PaginatedResponseOfSupplierDto OK
      * @throws ApiError
      */
     public static getApiSuppliers1(
@@ -66,7 +67,7 @@ export class SuppliersService {
         filterValue?: string,
         orderBy?: string,
         isDescending?: boolean,
-    ): CancelablePromise<Response<SupplierDto>> {
+    ): CancelablePromise<PaginatedResponse<SupplierDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/suppliers',
@@ -78,24 +79,6 @@ export class SuppliersService {
                 'OrderBy': orderBy,
                 'IsDescending': isDescending,
             },
-            errors: {
-                400: `Bad Request`,
-            },
-        });
-    }
-    /**
-     * @param requestBody
-     * @returns any Created
-     * @throws ApiError
-     */
-    public static postApiSuppliers(
-        requestBody?: SupplierDto,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/suppliers',
-            body: requestBody,
-            mediaType: 'application/json',
             errors: {
                 400: `Bad Request`,
             },

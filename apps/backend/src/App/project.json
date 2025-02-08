@@ -1,0 +1,14 @@
+{
+    "name": "api",
+    "root": "apps/backend/src/App",
+    "projectType": "application",
+    "targets": {
+        "serve": {
+            "executor": "@nx-dotnet/core:serve",
+            "options": {
+                "launch-profile": "https",
+                "verbosity": "quiet"
+            }
+        }
+    }
+}

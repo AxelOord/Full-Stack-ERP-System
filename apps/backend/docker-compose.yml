@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  app:
+    image: ${DOCKER_REGISTRY-}app:latest
+    build:
+      context: .
+      dockerfile: src/App/Dockerfile
+    ports:
+      - "5135:5135"
+      - "7013:7013"
+    depends_on:
+      - db
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5135
+      - ASPNETCORE_HTTPS_PORTS=7013
+      - ASPNETCORE_URLS=http://0.0.0.0:5135
+      - ASPNETCORE_URLS=https://0.0.0.0:7013
+    networks:
+      - app-network
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7013"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=Password123
+      - ACCEPT_EULA=Y
+    volumes:
+      - db-data:/var/opt/mssql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+  
+volumes:
+  db-data:  

@@ -3,23 +3,19 @@ version: '3.4'
 services:
   app:
     image: ${DOCKER_REGISTRY-}app:latest
+    platform: linux/amd64
     build:
       context: .
       dockerfile: src/App/Dockerfile
     ports:
       - "5135:5135"
-      - "7013:7013"
     depends_on:
       - db
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5135
       - ASPNETCORE_HTTPS_PORTS=7013
       - ASPNETCORE_URLS=http://0.0.0.0:5135
-      - ASPNETCORE_URLS=https://0.0.0.0:7013
     networks:
       - app-network
     restart: on-failure

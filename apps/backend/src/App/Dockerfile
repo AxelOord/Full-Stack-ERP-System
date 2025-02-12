@@ -3,6 +3,8 @@
 
 # Base image for running the application in debug mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+USER root
+RUN apt-get update && apt-get --yes install curl
 USER $APP_UID
 WORKDIR /app
 EXPOSE 5135 7013
@@ -48,7 +50,7 @@ RUN dotnet publish "App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAp
 # Final image for production or regular mode in VS (non-Debug configuration)
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish /app
 
+COPY --from=publish /app/publish /app
 # Run the application
 ENTRYPOINT ["dotnet", "App.dll"]

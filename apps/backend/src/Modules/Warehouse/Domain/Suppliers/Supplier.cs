@@ -1,5 +1,6 @@
 using Domain.Primitives;
 using Warehouse.Domain.Articles;
+using Warehouse.Domain.Suppliers.Dtos;
 
 namespace Warehouse.Domain.Suppliers
 {
@@ -17,6 +18,11 @@ namespace Warehouse.Domain.Suppliers
       Name = name;
       SbnId = sbnId;
       IsActive = isActive;
+    }
+
+    public static Supplier Create(CreateSupplierDto Dto)
+    {
+      return new Supplier(Guid.NewGuid(), Dto.Name, Dto.SbnId, Dto.IsActive);
     }
   }
 }

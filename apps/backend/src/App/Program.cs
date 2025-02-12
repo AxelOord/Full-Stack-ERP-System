@@ -53,6 +53,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
 var app = builder.Build();
 
+app.MapGet("/api/health", () => Results.Ok("Healthy"));
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${DOCKER_REGISTRY-}app:latest
+    image: ${DOCKER_REGISTRY-}app:${IMAGE_TAG:-latest}
     platform: linux/amd64
     build:
       context: ./apps/backend
@@ -23,6 +23,7 @@ services:
       retries: 3
   
   frontend:
+    image: ${DOCKER_REGISTRY-}frontend:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile

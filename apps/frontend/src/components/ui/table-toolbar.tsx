@@ -11,13 +11,13 @@ import { Table } from '@tanstack/react-table';
 
 interface TableToolbarProps {
     table: Table<object>;
-    onInputChange: (searchTerm: string) => void;
+    onInputChange: ((searchTerm: string) => void) | null;
   }
 
 const TableToolbar = ({ table, onInputChange } : TableToolbarProps) => {
   return (
     <div className="flex items-center py-4">
-      <InputSearch onInputChange={(value) => onInputChange(value)} />
+      <InputSearch onInputChange={onInputChange} />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="ml-auto">

@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { Search } from "lucide-react";
 
 interface InputSearchProps {
-  onInputChange?: (value: string) => void;
+  onInputChange?: ((value: string) => void) | null;
 }
 
 export default function InputSearch({ onInputChange }: InputSearchProps) {
@@ -42,6 +42,7 @@ export default function InputSearch({ onInputChange }: InputSearchProps) {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          disabled={!onInputChange}
         />
         <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50 ">
           <Search size={16} strokeWidth={2} />

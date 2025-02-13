@@ -28,7 +28,7 @@ import Pagination from "./pagination"
 
 interface DataTableProps<T> {
   data: PaginatedResponse<T> | null;
-  onSearch: (searchTerm: string) => void;
+  onSearch: ((searchTerm: string) => void ) | null;
   onPaginate: (link?: string | null | undefined) => void;
 }
 
@@ -116,8 +116,6 @@ export function DataTable<T extends object>({ data, onSearch, onPaginate }: Data
             )}
           </TableBody>
         </Table>
-
-        
       </div>
 
       <Pagination

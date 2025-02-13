@@ -12,17 +12,15 @@ interface TableWrapperProps<T> {
     sortBy?: string,
     searchTerm?: string
   ) => Promise<PaginatedResponse<T>>;
-  searchByProperty: string;
 }
 
 export default function TableWrapper<T extends object>({
   fetchData,
-  searchByProperty
-}: TableWrapperProps<T>) {
+  }: TableWrapperProps<T>) {
   const [data, setData] = useState<PaginatedResponse<T> | null>(null);
 
   const loadData = useCallback(
-    async (link?: string | null | undefined) => {
+    async (link?: string | null | undefined) => { // TODO: make Link type that has rel href and method
       const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchData(undefined, 25);
       setData(response);
     },
@@ -33,12 +31,12 @@ export default function TableWrapper<T extends object>({
     loadData();
   }, [loadData]);
 
+  const field = data?.metadata?.columns?.at(1)?.field; // TODO: define in api
+
   return (
     <DataTable<T>
       data={data}
-      onSearch={(term : string) => {
-        fetchData(undefined, 25, searchByProperty, term).then(setData);
-      }}
+      onSearch={field ? (term: string) => fetchData(undefined, 25, field, term).then(setData) : null}
       onPaginate={(link?: string | null | undefined) => loadData(link)}
     />
   );

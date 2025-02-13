@@ -13,7 +13,6 @@ export default function Page() {
 
       <TableWrapper<ArticleDto>
         fetchData={ArticlesService.getApiArticles}
-        searchByProperty="articleNumber"
         key={refreshKey}
       />
     </>

@@ -2,29 +2,31 @@ import React from "react";
 import { Button } from "./button"
 
 interface PaginationProps {
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-    onNextPage: () => void;
-    onPrevPage: () => void;
+  nextPage?: () => void;
+  prevPage?: () => void;
 }
   
 
-const Pagination = ({ hasPrevPage, hasNextPage, onPrevPage, onNextPage } : PaginationProps) => {
+const Pagination = ({ 
+  nextPage,
+  prevPage,
+} : PaginationProps) => {
+
   return (
     <div className="flex flex-initial items-center justify-end space-x-2 py-4 px-8 border-t">
       <Button
         variant="outline"
         size="sm"
-        onClick={onPrevPage}
-        disabled={!hasPrevPage}
+        onClick={prevPage}
+        disabled={!prevPage}
       >
         GLOBAL_PREV
       </Button>
       <Button
         variant="outline"
         size="sm"
-        onClick={onNextPage}
-        disabled={!hasNextPage}
+        onClick={nextPage}
+        disabled={!nextPage}
       >
         GLOBAL_NEXT
       </Button>

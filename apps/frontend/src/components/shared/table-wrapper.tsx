@@ -1,46 +1,45 @@
-"use client";
+"use client"
 
-import { useEffect, useState, useCallback } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { PaginatedResponse } from "@/services";
-import { requestFromUrl as __request } from '@/services/core/request';
+import { useState, useCallback, useEffect } from "react";
+import { requestFromUrl as __request } from "@/services/core/request";
 
 interface TableWrapperProps<T> {
-  fetchInitialData: () => Promise<PaginatedResponse<T>>;
-  searchByTerm?: (searchTerm: string) => Promise<PaginatedResponse<T>>;
+  fetchData: (
+    pageNumber?: number,
+    pageSize?: number,
+    sortBy?: string,
+    searchTerm?: string
+  ) => Promise<PaginatedResponse<T>>;
+  searchByProperty: string;
 }
 
 export default function TableWrapper<T extends object>({
-  fetchInitialData,
-  searchByTerm
+  fetchData,
+  searchByProperty
 }: TableWrapperProps<T>) {
   const [data, setData] = useState<PaginatedResponse<T> | null>(null);
 
-  const fetchData = useCallback(
-    async (link?: string | null) => {
-      const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchInitialData();
+  const loadData = useCallback(
+    async (link?: string | null | undefined) => {
+      const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchData(undefined, 25);
       setData(response);
     },
-    [fetchInitialData]
+    [fetchData]
   );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    loadData();
+  }, [loadData]);
 
   return (
     <DataTable<T>
-      result={data}
-      hasNextPage={!!data?.links?.next}
-      hasPrevPage={!!data?.links?.prev}
-      onNextPage={() => fetchData(data?.links?.next)}
-      onPrevPage={() => fetchData(data?.links?.prev)}
-      onInputChange={async (searchTerm: string) => {
-        if (searchByTerm) {
-          const response = await searchByTerm(searchTerm);
-          setData(response);
-        }
+      data={data}
+      onSearch={(term : string) => {
+        fetchData(undefined, 25, searchByProperty, term).then(setData);
       }}
+      onPaginate={(link?: string | null | undefined) => loadData(link)}
     />
   );
 }

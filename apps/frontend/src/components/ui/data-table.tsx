@@ -27,23 +27,13 @@ import TableToolbar from "./table-toolbar"
 import Pagination from "./pagination"
 
 interface DataTableProps<T> {
-  result: PaginatedResponse<T> | null;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-  onNextPage: () => void;
-  onPrevPage: () => void;
-  onInputChange: (searchTerm: string) => void;
+  data: PaginatedResponse<T> | null;
+  onSearch: (searchTerm: string) => void;
+  onPaginate: (link?: string | null | undefined) => void;
 }
 
-
-export function DataTable<T extends object>({
-  result,
-  hasNextPage,
-  hasPrevPage,
-  onNextPage,
-  onPrevPage,
-  onInputChange,
-}: DataTableProps<T>) {
+export function DataTable<T extends object>({ data, onSearch, onPaginate }: DataTableProps<T>) {
+  const isLoading = !data || !data?.metadata;
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -51,11 +41,9 @@ export function DataTable<T extends object>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
 
-  const isLoading = !result || !result?.metadata;
-
   const tableData = React.useMemo(
-    () => (isLoading ? Array(50).fill({}) : result.data),
-    [isLoading, result]
+    () => (isLoading ? Array(50).fill({}) : data.data),
+    [isLoading, data]
   );
 
   const loadingColumns: ColumnDef<ApiData<T>>[] = Array(4).fill(null).map((_, index) => ({
@@ -65,8 +53,8 @@ export function DataTable<T extends object>({
   }));
 
   const columnsMemo = useMemo(
-    () => (isLoading ? loadingColumns : createColumns<T>(result?.metadata?.columns || [])),
-    [isLoading, result?.metadata?.columns, loadingColumns]
+    () => (isLoading ? loadingColumns : createColumns<T>(data?.metadata?.columns || [])),
+    [isLoading, data?.metadata?.columns, loadingColumns]
   );
 
   const table = useReactTable({
@@ -86,7 +74,7 @@ export function DataTable<T extends object>({
     <>
       <div className="max-h-full flex flex-col flex-auto min-h-0 max-w-full px-6">
         <Loader isLoading={isLoading} />
-        <TableToolbar table={table} onInputChange={onInputChange} />
+        <TableToolbar table={table} onInputChange={onSearch} />
         <Table className="flex flex-col">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -133,10 +121,8 @@ export function DataTable<T extends object>({
       </div>
 
       <Pagination
-          hasPrevPage={hasPrevPage}
-          hasNextPage={hasNextPage}
-          onPrevPage={onPrevPage}
-          onNextPage={onNextPage}
+          nextPage={data?.links?.next ? () => onPaginate(data.links.next) : undefined}
+          prevPage={data?.links?.prev ? () => onPaginate(data.links.prev) : undefined}
         />
     </>
   );

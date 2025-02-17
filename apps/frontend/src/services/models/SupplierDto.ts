@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type SupplierDto = {
-    sbnId: number;
-    name: string;
-    isActive?: boolean;
+	sbnId: number;
+	name: string;
+	isActive?: boolean;
 };
 

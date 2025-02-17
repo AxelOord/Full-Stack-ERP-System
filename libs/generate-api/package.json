@@ -1,0 +1,22 @@
+{
+  "name": "generate-api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "bin": {
+    "openapi": "bin/index.js"
+  },
+  "files": [
+    "bin/index.js",
+    "dist/index.js",
+    "types/index.d.ts"
+  ],
+  "scripts": {
+    "clean": "rimraf ./test/generated ./test/e2e/generated ./samples/generated",
+    "build": "rollup --config --environment NODE_ENV:development",
+    "build:watch": "rollup --config --environment NODE_ENV:development --watch"
+  },
+  "executors": "./executors.json"
+}

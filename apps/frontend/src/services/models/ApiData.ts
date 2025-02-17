@@ -4,9 +4,9 @@
 /* eslint-disable */
 import type { AttributeLinks } from './AttributeLinks';
 export type ApiData<T> = {
-    type: string;
-    id?: string;
-    attributes: T;
-    links: AttributeLinks;
+	type: string;
+	id?: string;
+	attributes: T;
+	links: AttributeLinks;
 };
 

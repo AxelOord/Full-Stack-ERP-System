@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type AttributeLinks = {
-    self: string;
+	self: string;
 };
 

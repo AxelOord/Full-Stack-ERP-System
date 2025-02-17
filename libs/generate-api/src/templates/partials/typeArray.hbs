@@ -1,0 +1,9 @@
+{{~#if link~}}
+Array<{{>type link}}>{{>isNullable}}
+{{~else~}}
+{{~#if template~}}
+Array<{{>base}}<T>>{{>isNullable}}
+{{~else~}}
+Array<{{>base}}>{{>isNullable}}
+{{~/if~}}
+{{~/if~}}

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Generate OpenAPI Types",
+  "description": "Generates TypeScript types from OpenAPI spec",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "string",
+      "description": "Path to the OpenAPI spec file"
+    },
+    "output": {
+      "type": "string",
+      "description": "Output directory for the generated client"
+    },
+    "clientName": {
+      "type": "string",
+      "description": "Custom client name"
+    },
+    "useOptions": {
+      "type": "boolean",
+      "description": "Use options instead of function arguments"
+    },
+    "useUnionTypes": {
+      "type": "boolean",
+      "description": "Use union types instead of enums"
+    },
+    "exportCore": {
+      "type": "boolean",
+      "default": true,
+      "description": "Export core client classes"
+    },
+    "exportServices": {
+      "type": "boolean",
+      "default": true,
+      "description": "Export services"
+    },
+    "exportModels": {
+      "type": "boolean",
+      "default": true,
+      "description": "Export models"
+    },
+    "exportSchemas": {
+      "type": "boolean",
+      "default": false,
+      "description": "Export schemas"
+    },
+    "indent": {
+      "type": "integer",
+      "enum": [2, 4],
+      "default": 4,
+      "description": "Indentation level"
+    },
+    "postfixServices": {
+      "type": "string",
+      "default": "Service",
+      "description": "Postfix for service class names"
+    },
+    "postfixModels": {
+      "type": "string",
+      "default": "",
+      "description": "Postfix for model class names"
+    },
+    "request": {
+      "type": "string",
+      "description": "Path to custom request file"
+    },
+    "write": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to write files to disk"
+    },
+    "verbose": {
+      "type": "boolean",
+      "default": false,
+      "description": "extra logging for debugging"
+    }
+  },
+  "required": ["input", "output"]
+}

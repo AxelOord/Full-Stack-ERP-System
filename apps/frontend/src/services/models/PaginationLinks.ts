@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PaginationLinks = {
-    self: string;
-    next?: string | null;
-    prev?: string | null;
+	self: string;
+	next?: string | null;
+	prev?: string | null;
 };
 

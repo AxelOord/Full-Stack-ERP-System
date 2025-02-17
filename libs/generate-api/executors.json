@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "generate-api": {
+      "implementation": "./src/executors/generate-api",
+      "schema": "./src/executors/schema.json",
+      "description": "generate executor"
+    }
+  }
+}

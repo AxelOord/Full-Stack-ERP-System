@@ -1,37 +1,68 @@
 {
-    "name": "frontend",
-    "root": "apps/frontend",
-    "implicitDependencies": ["api"],
-    "sourceRoot": "apps/frontend/src",
-    "projectType": "application",
-    "targets": {
-      "build": {
-        "executor": "@nx/next:build",
-        "options": {
-          "outputPath": "dist/apps/frontend"
+  "name": "frontend",
+  "root": "apps/frontend",
+  "implicitDependencies": [
+    "api"
+  ],
+  "sourceRoot": "apps/frontend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/frontend"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/frontend"
         },
-        "configurations": {
-          "production": {}
-        }
-      },
-      "serve": {
-        "executor": "@nx/next:server",
-        "options": {
-          "buildTarget": "frontend:build"
-        }
-      },
-      "lint": {
-        "executor": "@nx/linter:eslint",
-        "options": {
-          "lintFilePatterns": ["apps/frontend/**/*.ts", "apps/frontend/**/*.tsx"]
-        }
-      },
-      "test": {
-        "executor": "@nx/jest:jest",
-        "options": {
-          "jestConfig": "apps/frontend/jest.config.ts",
-          "passWithNoTests": true
+        "production": {
+          "generateLockfile": true
         }
       }
+    },
+    "docker-build": {
+      "command": "docker build -t my-frontend-app -f apps/frontend/Dockerfile ."
+    },
+    "docker-run": {
+      "command": "docker run -p 3000:3000 my-frontend-app"
+    },
+    "generate-api": {
+      "executor": "./dist/libs/generate-api:generate-api",
+      "options": {
+        "input": "http://localhost:5135/openapi/v1.json",
+        "output": "./apps/frontend/src/services",
+        "httpClient": "fetch",
+        "exportCore": true,
+        "exportServices": true,
+        "exportModels": true
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "frontend:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/frontend/**/*.ts",
+          "apps/frontend/**/*.tsx"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/frontend/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
-  }  
+  }
+}

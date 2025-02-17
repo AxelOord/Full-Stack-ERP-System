@@ -4,6 +4,6 @@
 /* eslint-disable */
 import type { Column } from './Column';
 export type Metadata = {
-    columns?: Array<Column> | null;
+	columns?: Array<Column> | null;
 };
 

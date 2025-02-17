@@ -1,27 +1,23 @@
-# This template uses Automatically Copying Traced Files feature
-# so you need to setup your Next Config file to use `output: 'standalone'`
-# Please read this for more information https://nextjs.org/docs/pages/api-reference/next-config-js/output
+# Step 1: Use official Node.js image
+FROM node:18-alpine AS builder
 
-# Production image, copy all the files and run next
-FROM docker.io/node:lts-alpine AS runner
-RUN apk add --no-cache dumb-init
-ENV NODE_ENV=production
-ENV PORT=3000
-WORKDIR /usr/src/app
-COPY apps/frontend/next.config.ts ./
-COPY apps/frontend/public ./public
-COPY apps/frontend/.next/standalone/apps/frontend ./
-COPY apps/frontend/.next/standalone/package.json ./
-COPY apps/frontend/.next/standalone/node_modules ./node_modules
-COPY apps/frontend/.next/static ./.next/static
-# RUN npm i sharp
-RUN chown -R node:node .
-USER node
+# Set working directory inside container
+WORKDIR /app
+
+# Copy only necessary files for better caching
+COPY dist/apps/frontend ./
+
+# Install dependencies at the root (Nx handles dependencies)
+RUN npm install
+
+# Step 2: Create a minimal image for production
+FROM node:18-alpine AS runner
+# Set working directory
+WORKDIR /app
+COPY --from=builder /app/.next/standalone ./standalone
+
+# Expose port 3000
 EXPOSE 3000
-# COPY --chown=node:node ./tools/scripts/entrypoints/api.sh /usr/local/bin/docker-entrypoint.sh
-# ENTRYPOINT [ "docker-entrypoint.sh" ]
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry.
-ENV NEXT_TELEMETRY_DISABLED=1
-CMD ["dumb-init", "node", "server.js"]
+
+# Run Next.js in production mode
+CMD ["node", "standalone/apps/frontend/server.js"]

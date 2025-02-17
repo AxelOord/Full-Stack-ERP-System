@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ArticleDto = {
-    supplierName: string;
-    articleNumber: string;
-    name: string;
-    isActive?: boolean;
+	supplierName: string;
+	articleNumber: string;
+	name: string;
+	isActive?: boolean;
 };
 

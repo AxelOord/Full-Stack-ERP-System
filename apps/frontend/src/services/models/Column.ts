@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Column = {
-    field?: string | null;
-    key?: string | null;
-    type?: string | null;
-    sortable?: boolean | null;
+	field?: string | null;
+	key?: string | null;
+	type?: string | null;
+	sortable?: boolean | null;
 };
 

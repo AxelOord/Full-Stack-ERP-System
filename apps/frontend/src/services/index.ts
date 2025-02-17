@@ -12,6 +12,7 @@ export type { ArticleDto } from './models/ArticleDto';
 export type { AttributeLinks } from './models/AttributeLinks';
 export type { Column } from './models/Column';
 export type { CreateArticleDto } from './models/CreateArticleDto';
+export type { CreateSupplierDto } from './models/CreateSupplierDto';
 export type { Metadata } from './models/Metadata';
 export type { PaginatedResponse } from './models/PaginatedResponse';
 export type { PaginationLinks } from './models/PaginationLinks';
@@ -19,5 +20,6 @@ export type { ProblemDetails } from './models/ProblemDetails';
 export type { Response } from './models/Response';
 export type { SupplierDto } from './models/SupplierDto';
 
+export { AppService } from './services/AppService';
 export { ArticlesService } from './services/ArticlesService';
 export { SuppliersService } from './services/SuppliersService';

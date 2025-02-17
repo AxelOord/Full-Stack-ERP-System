@@ -1,0 +1,65 @@
+{{#ifdef description deprecated}}
+/**
+{{#if description}}
+ * {{{escapeComment description}}}
+{{/if}}
+{{#if deprecated}}
+ * @deprecated
+{{/if}}
+ */
+{{/ifdef}}
+{{#if template}}
+export type {{{name}}}<{{template}}> = {
+	{{#each properties}}
+	{{#ifdef description deprecated}}
+	/**
+	{{#if description}}
+	 * {{{escapeComment description}}}
+	{{/if}}
+	{{#if deprecated}}
+	 * @deprecated
+	{{/if}}
+	 */
+	{{/ifdef}}
+	{{>isReadOnly}}{{{name}}}{{>isRequired}}: {{>type parent=../name}};
+	{{/each}}
+};
+{{else}}
+export type {{{name}}} = {
+	{{#each properties}}
+	{{#ifdef description deprecated}}
+	/**
+	{{#if description}}
+	 * {{{escapeComment description}}}
+	{{/if}}
+	{{#if deprecated}}
+	 * @deprecated
+	{{/if}}
+	 */
+	{{/ifdef}}
+	{{>isReadOnly}}{{{name}}}{{>isRequired}}: {{>type parent=../name}};
+	{{/each}}
+};
+{{/if}}
+{{#if enums}}
+{{#unless @root.useUnionTypes}}
+
+export namespace {{{name}}} {
+
+	{{#each enums}}
+	{{#if description}}
+	/**
+	 * {{{escapeComment description}}}
+	 */
+	{{/if}}
+	export enum {{{name}}} {
+		{{#each enum}}
+		{{{name}}} = {{{value}}},
+		{{/each}}
+	}
+
+	{{/each}}
+
+}
+{{/unless}}
+{{/if}}

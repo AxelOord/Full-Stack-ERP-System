@@ -2,7 +2,7 @@
   "name": "frontend",
   "root": "apps/frontend",
   "implicitDependencies": [
-    "api"
+    "backend"
   ],
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
@@ -12,24 +12,36 @@
       "outputs": [
         "{options.outputPath}"
       ],
-      "defaultConfiguration": "production",
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/frontend"
       },
       "configurations": {
-        "development": {
-          "outputPath": "apps/frontend"
-        },
+        "development": {},
         "production": {
           "generateLockfile": true
         }
       }
     },
-    "docker-build": {
-      "command": "docker build -t my-frontend-app -f apps/frontend/Dockerfile ."
-    },
-    "docker-run": {
-      "command": "docker run -p 3000:3000 my-frontend-app"
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "defaultConfiguration": "local",
+      "options": {
+        "engine": "docker",
+        "context": "dist/apps/frontend",
+        "file": "apps/frontend/Dockerfile"
+      },
+      "configurations": {
+        "local": {
+          "tags": ["frontend:dev"],
+          "push": false
+        },
+        "production": {
+          "tags": ["my.image-registry.com/frontend:latest"],
+          "push": true
+        }
+      }
     },
     "generate-api": {
       "executor": "./dist/libs/generate-api:generate-api",

@@ -1,0 +1,6 @@
+services:
+  backend:
+    image: backend:${IMAGE_TAG:-dev}
+
+  frontend:
+    image: frontend:${IMAGE_TAG:-dev}

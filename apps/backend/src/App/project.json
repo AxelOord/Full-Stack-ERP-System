@@ -1,5 +1,5 @@
 {
-    "name": "api",
+    "name": "backend",
     "root": "apps/backend/src/App",
     "projectType": "application",
     "targets": {
@@ -8,6 +8,29 @@
             "options": {
                 "launch-profile": "https",
                 "verbosity": "quiet"
+            }
+        },
+        "container": {
+            "executor": "@nx-tools/nx-container:build",
+            "defaultConfiguration": "local",
+            "options": {
+                "engine": "docker",
+                "context": "apps/backend",
+                "file": "apps/backend/src/App/Dockerfile"
+            },
+            "configurations": {
+                "local": {
+                    "tags": [
+                        "backend:dev"
+                    ],
+                    "push": false
+                },
+                "production": {
+                    "tags": [
+                        "backend:latest"
+                    ],
+                    "push": false
+                }
             }
         }
     }

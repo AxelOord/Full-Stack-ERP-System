@@ -5,7 +5,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "lib": ["es2019", "dom"],
-        "types": ["jest", "node"],
+        "types": ["node"],
         "declaration": false,
         "declarationMap": false,
         "sourceMap": false,

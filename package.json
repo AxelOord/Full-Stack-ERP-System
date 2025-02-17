@@ -93,8 +93,21 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "scripts": {
-    "prepare": "nx g @nx-dotnet/core:restore",
-    "dev": "nx run-many --target=serve -p api frontend",
-    "build": "nx run-many --target=build -p api frontend"
+    "prepare": "nx g @nx-dotnet/core:restore && nx g @nx-dotnet/core:clean",
+
+    "dev": "docker compose -f compose.yml -f compose.override.yml up",
+    "dev-down": "docker compose down",
+    "build-dev": "nx run backend:container:local && nx run frontend:container:local",
+
+    "build-prod": "nx run backend:container --configuration=production && nx run frontend:container --configuration=production",
+
+    "compose-up": "npm run build-prod && docker compose -f compose.prod.yml up -d",
+    "compose-down": "docker compose -f compose.prod.yml down",
+
+    "tag-latest": "docker tag backend:latest serajevo/backend:latest && docker tag frontend:latest serajevo/frontend:latest",
+    "tag-version": "docker tag backend:latest serajevo/backend:$VERSION && docker tag frontend:latest serajevo/frontend:$VERSION",
+
+    "push-latest": "npm run tag-latest && docker push serajevo/backend:latest && docker push serajevo/frontend:latest",
+    "push-version": "npm run tag-version && docker push serajevo/backend:$VERSION && docker push serajevo/frontend:$VERSION"
   }
 }

@@ -1,23 +1,32 @@
-# Step 1: Use official Node.js image
-FROM node:18-alpine AS builder
+# Install dependencies only when needed
+FROM docker.io/node:lts-alpine as dependencies
 
-# Set working directory inside container
-WORKDIR /app
+RUN apk add --no-cache libc6-compat
+WORKDIR /usr/src/app
+COPY package.json ./
+RUN npm install --only=production
 
-# Copy only necessary files for better caching
-COPY dist/apps/frontend ./
+# Production image, copy all the files and run next
+FROM docker.io/node:lts-alpine as runner
+RUN apk add --no-cache dumb-init
 
-# Install dependencies at the root (Nx handles dependencies)
-RUN npm install
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Step 2: Create a minimal image for production
-FROM node:18-alpine AS runner
-# Set working directory
-WORKDIR /app
-COPY --from=builder /app/.next/standalone ./standalone
+WORKDIR /usr/src/app
 
-# Expose port 3000
+# Copy installed dependencies from dependencies stage
+COPY --from=dependencies /usr/src/app/node_modules ./node_modules
+
+# Copy built application files
+COPY ./ ./
+
+# Run the application under "node" user by default
+RUN chown -R node:node .
+USER node
 EXPOSE 3000
 
-# Run Next.js in production mode
-CMD ["node", "standalone/apps/frontend/server.js"]
+# If you are using the custom server implementation:
+CMD ["dumb-init", "npm", "start"]

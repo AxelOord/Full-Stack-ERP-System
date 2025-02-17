@@ -1,6 +1,6 @@
 services:
-  app:
-    image: ${DOCKER_REGISTRY-}app:${IMAGE_TAG:-latest}
+  backend:
+    image: ${DOCKER_REGISTRY-}backend:latest
     platform: linux/amd64
     build:
       context: ./apps/backend
@@ -22,24 +22,24 @@ services:
       timeout: 10s
       retries: 3
   
-  # frontend:
-  #   image: ${DOCKER_REGISTRY-}frontend:${IMAGE_TAG:-latest}
-  #   build:
-  #     context: .
-  #     dockerfile: apps/frontend/Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - NODE_ENV=production
-  #   depends_on:
-  #     - app
-  #   networks:
-  #     - app-network
+  frontend:
+    image: ${DOCKER_REGISTRY-}frontend:latest
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
-      - "1433:1433"
+      - "1433"
     environment:
       - SA_PASSWORD=Password123
       - ACCEPT_EULA=Y

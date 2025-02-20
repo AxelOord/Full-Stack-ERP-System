@@ -1,7 +1,7 @@
 "use client"
 
 import { DataTable } from "@/components/ui/data-table";
-import { PaginatedResponse } from "@/services";
+import { Link, PaginatedResponse } from "@/services";
 import { useState, useCallback, useEffect } from "react";
 import { requestFromUrl as __request } from "@/services/core/request";
 
@@ -20,7 +20,7 @@ export default function TableWrapper<T extends object>({
   const [data, setData] = useState<PaginatedResponse<T> | null>(null);
 
   const loadData = useCallback(
-    async (link?: string | null | undefined) => { // TODO: make Link type that has rel href and method
+    async (link?: Link) => { // TODO: make Link type that has rel href and method
       const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchData(undefined, 25);
       setData(response);
     },
@@ -37,7 +37,7 @@ export default function TableWrapper<T extends object>({
     <DataTable<T>
       data={data}
       onSearch={field ? (term: string) => fetchData(undefined, 25, field, term).then(setData) : null}
-      onPaginate={(link?: string | null | undefined) => loadData(link)}
+      onPaginate={(link?: Link) => loadData(link)}
     />
   );
 }

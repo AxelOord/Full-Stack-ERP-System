@@ -17,7 +17,7 @@ services:
       - app-network
     restart: on-failure
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5135/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5135/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,7 +39,7 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
-      - "1433"
+      - "1433:1433"
     environment:
       - SA_PASSWORD=Password123
       - ACCEPT_EULA=Y

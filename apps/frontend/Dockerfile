@@ -1,32 +1,33 @@
-# Install dependencies only when needed
-FROM docker.io/node:lts-alpine as dependencies
-
-RUN apk add --no-cache libc6-compat
+# Base image for installing dependencies
+FROM node:18-alpine AS dependencies
 WORKDIR /usr/src/app
 COPY package.json ./
-RUN npm install --only=production
+RUN npm install --omit=dev && rm -rf node_modules/.cache
 
-# Production image, copy all the files and run next
-FROM docker.io/node:lts-alpine as runner
-RUN apk add --no-cache dumb-init
+# Build stage
+FROM node:18-alpine AS builder
+WORKDIR /usr/src/app
+COPY --from=dependencies /usr/src/app/node_modules ./node_modules
+COPY . .
+
+# Production stage
+FROM node:18-alpine AS runner
+WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
 
-WORKDIR /usr/src/app
-
-# Copy installed dependencies from dependencies stage
+# Copy only necessary files
+# --chown to change owner so that runner can cache files
+COPY --from=builder --chown=node:node /usr/src/app/.next ./.next
+COPY --from=builder /usr/src/app/public ./public
+COPY --from=builder /usr/src/app/package.json ./
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
 
-# Copy built application files
-COPY ./ ./
-
-# Run the application under "node" user by default
-RUN chown -R node:node .
+# Run as non-root user
 USER node
-EXPOSE 3000
 
-# If you are using the custom server implementation:
-CMD ["dumb-init", "npm", "start"]
+EXPOSE 3000
+CMD ["npm", "start"]

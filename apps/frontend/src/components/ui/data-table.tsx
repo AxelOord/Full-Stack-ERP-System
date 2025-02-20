@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table"
 import React, { useMemo } from "react"
 import { createColumns } from "./columns"
-import { ApiData, PaginatedResponse } from "@/services";
+import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "./skeleton"
 import Loader from "../shared/loader"
 import TableToolbar from "./table-toolbar"
@@ -29,7 +29,7 @@ import Pagination from "./pagination"
 interface DataTableProps<T> {
   data: PaginatedResponse<T> | null;
   onSearch: ((searchTerm: string) => void ) | null;
-  onPaginate: (link?: string | null | undefined) => void;
+  onPaginate: (link?: Link) => void;
 }
 
 export function DataTable<T extends object>({ data, onSearch, onPaginate }: DataTableProps<T>) {

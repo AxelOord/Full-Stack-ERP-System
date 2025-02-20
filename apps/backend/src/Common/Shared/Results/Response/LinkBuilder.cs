@@ -57,11 +57,10 @@ namespace Shared.Results.Response
           : $"{request.Scheme}://{request.Host}{routeName}?{GenerateQueryString(routeParams)}";
 
 
-      return new PaginationLinks
-      {
-        Self = self,
-        Next = next,
-        Prev = prev
+      return new PaginationLinks {
+          Self = new Link(self, "self", "GET"),
+          Next = next != null ? new Link(next, "next", "GET") : null,
+          Prev = prev != null ? new Link(prev, "prev", "GET") : null
       };
     }
 

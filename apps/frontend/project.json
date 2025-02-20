@@ -25,7 +25,6 @@
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",
-      "dependsOn": ["build"],
       "defaultConfiguration": "local",
       "options": {
         "engine": "docker",
@@ -38,7 +37,7 @@
           "push": false
         },
         "production": {
-          "tags": ["my.image-registry.com/frontend:latest"],
+          "tags": ["frontend:latest"],
           "push": true
         }
       }

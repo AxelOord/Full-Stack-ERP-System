@@ -12,7 +12,7 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "-v", "-k", "https://localhost:7013/api/health"]  # -k is for insecure SSL !LOCAL ONLY!
+      test: ["CMD", "curl", "-f", "-v", "-k", "https://localhost:7013/health"]  # -k is for insecure SSL !LOCAL ONLY!
       interval: 30s
       timeout: 10s
       retries: 3

@@ -13,6 +13,7 @@ export type { AttributeLinks } from './models/AttributeLinks';
 export type { Column } from './models/Column';
 export type { CreateArticleDto } from './models/CreateArticleDto';
 export type { CreateSupplierDto } from './models/CreateSupplierDto';
+export type { Link } from './models/Link';
 export type { Metadata } from './models/Metadata';
 export type { PaginatedResponse } from './models/PaginatedResponse';
 export type { PaginationLinks } from './models/PaginationLinks';

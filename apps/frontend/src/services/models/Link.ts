@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Link } from './Link';
-export type PaginationLinks = {
-	self: Link;
-	next?: Link;
-	prev?: Link;
+export type Link = {
+	href: string;
+	rel: string;
+	method: string;
 };
 

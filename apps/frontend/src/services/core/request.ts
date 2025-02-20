@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import { Link } from '../models/Link';
 import { ApiError } from './ApiError';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import type { ApiResult } from './ApiResult';
@@ -327,7 +328,7 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): C
  * @returns CancelablePromise<T>
  * @throws ApiError
  */
-export const requestFromUrl = <T>(url: string): CancelablePromise<T> => {
+export const requestFromUrl = <T>(link: Link): CancelablePromise<T> => {
     return new CancelablePromise(async (resolve, reject, onCancel) => {
         try {
             const controller = new AbortController();
@@ -335,7 +336,7 @@ export const requestFromUrl = <T>(url: string): CancelablePromise<T> => {
 
             onCancel(() => controller.abort());
 
-            const response = await fetch(url, { method: 'GET', signal });
+            const response = await fetch(link.href, { method: link.method, signal });
 
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);

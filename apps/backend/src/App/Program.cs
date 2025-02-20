@@ -1,10 +1,15 @@
+using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text.Json.Serialization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure.Extensions;
 using Infrastructure.Middleware;
+using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Models;
 using Persistence;
 using Scalar.AspNetCore;
+using Shared;
 using Shared.Results.Response;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +30,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
+builder.Services.AddHealthChecks();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<LinkBuilder>(); // FIXME: should not be scoped but something like a extension method
 
@@ -38,8 +44,32 @@ builder.Services.AddCors(options =>
         });
 }); // TODO: this should be conf
 
-// Register persistence services and other non-Autofac services
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+  // TODO: create IOpenApiSchemaTransformer to inject here
+  options.AddSchemaTransformer((schema, context, cancellationToken) =>
+  {
+      var type = context.JsonTypeInfo.Type;
+      foreach (var property in type.GetProperties())
+      {
+        if (property.GetCustomAttribute<NullableProp>() != null)
+        {
+          var schemaProperties = new Dictionary<string, OpenApiSchema>(schema.Properties, StringComparer.OrdinalIgnoreCase);
+
+          schemaProperties.TryGetValue(property.Name, out var prop);
+
+          if (prop != null && prop.Nullable && (string)prop.Annotations.First().Value == property.PropertyType.Name)
+          {
+            Console.WriteLine($"Fixing nullable reference for: {property.Name}");
+            prop.Nullable = true;
+            prop.Reference = new OpenApiReference { Id = property.PropertyType.Name, Type = ReferenceType.Schema };
+          }
+        }
+      }
+
+      return Task.CompletedTask;
+  });
+});
 
 builder.Services.AddAutoMapper(typeof(MappingProfile)); // TODO: should be auto discovered from multiple assemblies
 builder.Services.AddRouting(options => options.LowercaseUrls = true); // TODO: should be conf
@@ -53,7 +83,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
 var app = builder.Build();
 
-app.MapGet("/api/health", () => Results.Ok("Healthy"));
+app.MapHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {

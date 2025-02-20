@@ -17,7 +17,7 @@ services:
       - app-network
     restart: on-failure
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5135/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5135/health"]
       interval: 30s
       timeout: 10s
       retries: 3

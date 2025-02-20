@@ -1,16 +1,20 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Shared.Results.Response;
 
 namespace Shared.Results.PaginatedResponse
 {
-  public class PaginationLinks
-  {
-    [JsonPropertyName("self")]
-    public required string Self { get; set; }
+    public class PaginationLinks
+    {
+        [JsonProperty("self")]
+        [JsonRequired]
+        public required Link Self { get; set; }
 
-    [JsonPropertyName("next")]
-    public string? Next { get; set; }
+        [JsonProperty("next", NullValueHandling = NullValueHandling.Ignore)]
+        [NullableProp]
+        public Link? Next { get; set; }
 
-    [JsonPropertyName("prev")]
-    public string? Prev { get; set; }
-  }
+        [JsonProperty("prev", NullValueHandling = NullValueHandling.Ignore)]
+        [NullableProp]
+        public Link? Prev { get; set; }
+    }
 }

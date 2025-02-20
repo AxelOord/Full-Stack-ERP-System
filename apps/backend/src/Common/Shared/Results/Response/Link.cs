@@ -1,9 +1,16 @@
 ﻿namespace Shared.Results.Response
 {
-  public class Link(string href, string rel, string method)
-  {
-    public string Href { get; set; } = href;
-    public string Rel { get; set; } = rel;
-    public string Method { get; set; } = method;
-  }
+    public class Link
+    {
+        public string Href { get; set; }
+        public string Rel { get; set; }
+        public string Method { get; set; }
+
+        public Link(string href, string rel, string method)
+        {
+            Href = href;
+            Rel = rel;
+            Method = method;
+        }
+    }
 }

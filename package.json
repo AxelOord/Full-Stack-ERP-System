@@ -93,8 +93,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "scripts": {
-    "prepare": "nx g @nx-dotnet/core:restore && nx g @nx-dotnet/core:clean",
-
     "local": "npm run build-container && docker compose -f compose.yml -f compose.override.yml up",
     "build-container": "nx run backend:container:local && nx run frontend:container:local",
 

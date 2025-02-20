@@ -1,20 +1,19 @@
 {
   "name": "frontend",
   "root": "apps/frontend",
-  "implicitDependencies": [
-    "backend"
-  ],
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
   "targets": {
     "build": {
+      "cache": true,
       "executor": "@nx/next:build",
       "outputs": [
         "{options.outputPath}"
       ],
       "defaultConfiguration": "development",
       "options": {
-        "outputPath": "dist/apps/frontend"
+        "outputPath": "dist/apps/frontend",
+        "cache": true
       },
       "configurations": {
         "development": {},
@@ -24,12 +23,14 @@
       }
     },
     "container": {
+      "cache": true,
       "executor": "@nx-tools/nx-container:build",
       "defaultConfiguration": "local",
       "options": {
         "engine": "docker",
         "context": "dist/apps/frontend",
-        "file": "apps/frontend/Dockerfile"
+        "file": "apps/frontend/Dockerfile",
+        "cache": true
       },
       "configurations": {
         "local": {

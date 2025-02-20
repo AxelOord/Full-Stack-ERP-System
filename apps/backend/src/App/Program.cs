@@ -1,11 +1,9 @@
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Text.Json.Serialization;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure.Extensions;
 using Infrastructure.Middleware;
-using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Scalar.AspNetCore;
@@ -60,7 +58,7 @@ builder.Services.AddOpenApi(options =>
 
           if (prop != null && prop.Nullable && (string)prop.Annotations.First().Value == property.PropertyType.Name)
           {
-            Console.WriteLine($"Fixing nullable reference for: {property.Name}");
+            Console.WriteLine($"Fixing nullable reference for: {property.Name}"); // We really need a debug logger / logger setup
             prop.Nullable = true;
             prop.Reference = new OpenApiReference { Id = property.PropertyType.Name, Type = ReferenceType.Schema };
           }

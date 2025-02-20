@@ -11,6 +11,7 @@
             }
         },
         "container": {
+            "cache": true,
             "executor": "@nx-tools/nx-container:build",
             "defaultConfiguration": "local",
             "options": {

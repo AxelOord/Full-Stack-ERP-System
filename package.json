@@ -36,6 +36,7 @@
     "@typescript-eslint/parser": "^8.24.0",
     "abort-controller": "3.0.0",
     "axios": "1.7.4",
+    "cross-env": "^7.0.3",
     "cross-spawn": "7.0.3",
     "eslint": "^9.20.1",
     "eslint-config-next": "15.0.3",
@@ -95,12 +96,9 @@
   "scripts": {
     "local": "npm run build-container && docker compose -f compose.yml -f compose.override.yml up",
     "build-container": "nx run backend:container:local && nx run frontend:container:local",
-
     "build-prod": "nx run backend:container --configuration=production && nx run frontend:container --configuration=production",
-
     "tag-latest": "docker tag backend:latest serajevo/backend:latest && docker tag frontend:latest serajevo/frontend:latest",
     "tag-version": "docker tag backend:latest serajevo/backend:$VERSION && docker tag frontend:latest serajevo/frontend:$VERSION",
-
     "push-latest": "npm run tag-latest && docker push serajevo/backend:latest && docker push serajevo/frontend:latest",
     "push-version": "npm run tag-version && docker push serajevo/backend:$VERSION && docker push serajevo/frontend:$VERSION"
   }

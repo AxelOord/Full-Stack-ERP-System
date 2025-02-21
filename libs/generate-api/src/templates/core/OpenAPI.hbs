@@ -18,10 +18,10 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-	BASE: '{{{server}}}',
-	VERSION: '{{{version}}}',
-	WITH_CREDENTIALS: false,
-	CREDENTIALS: 'include',
+	BASE: process.env.NEXT_PUBLIC_API_BASE_URL || '{{{server}}}',
+	VERSION: process.env.NEXT_PUBLIC_API_VERSION || '{{{version}}}',
+	WITH_CREDENTIALS: process.env.NEXT_PUBLIC_WITH_CREDENTIALS === 'true',
+	CREDENTIALS: (process.env.NEXT_PUBLIC_CREDENTIALS as 'include' | 'omit' | 'same-origin') || 'include',
 	TOKEN: undefined,
 	USERNAME: undefined,
 	PASSWORD: undefined,

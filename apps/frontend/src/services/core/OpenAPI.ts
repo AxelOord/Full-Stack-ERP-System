@@ -20,10 +20,10 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-	BASE: 'http://localhost:5135',
-	VERSION: '1.0.0',
-	WITH_CREDENTIALS: false,
-	CREDENTIALS: 'include',
+	BASE: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5135',
+	VERSION: process.env.NEXT_PUBLIC_API_VERSION || '1.0.0',
+	WITH_CREDENTIALS: process.env.NEXT_PUBLIC_WITH_CREDENTIALS === 'true',
+	CREDENTIALS: (process.env.NEXT_PUBLIC_CREDENTIALS as 'include' | 'omit' | 'same-origin') || 'include',
 	TOKEN: undefined,
 	USERNAME: undefined,
 	PASSWORD: undefined,

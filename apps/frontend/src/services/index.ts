@@ -21,6 +21,5 @@ export type { ProblemDetails } from './models/ProblemDetails';
 export type { Response } from './models/Response';
 export type { SupplierDto } from './models/SupplierDto';
 
-export { AppService } from './services/AppService';
 export { ArticlesService } from './services/ArticlesService';
 export { SuppliersService } from './services/SuppliersService';

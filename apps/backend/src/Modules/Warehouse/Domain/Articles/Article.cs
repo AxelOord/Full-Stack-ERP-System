@@ -7,7 +7,6 @@ namespace Warehouse.Domain.Articles;
 
 public sealed class Article : Entity
 {
-
     public string ArticleNumber { get; private set; }
     public string Name { get; private set; }
     public bool IsActive { get; private set; }

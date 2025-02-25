@@ -4,7 +4,7 @@ using Warehouse.Domain.Suppliers;
 
 namespace Warehouse.Application.Suppliers.Commands.CreateSupplier;
 
-public class CreateSupplierCommandHandler : ICommandHandler<CreateSupplierCommand>
+internal sealed class CreateSupplierCommandHandler : ICommandHandler<CreateSupplierCommand>
 {
     private readonly ICreateSupplierService _createSupplierService;
 

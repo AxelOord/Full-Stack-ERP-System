@@ -20,7 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Warehouse\Application\Warehouse.Application.csproj" />
     <ProjectReference Include="..\..\src\Modules\Warehouse\Domain\Warehouse.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Warehouse\Infrastructure\Warehouse.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Warehouse\Persistence\Warehouse.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Warehouse\Presentation\Warehouse.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

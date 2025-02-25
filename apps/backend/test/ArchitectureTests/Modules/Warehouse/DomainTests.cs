@@ -1,6 +1,7 @@
 using ArchUnitNET.Domain;
 using ArchUnitNET.Domain.Extensions;
 using ArchUnitNET.Fluent;
+using ArchUnitNET.xUnit;
 using Domain.Primitives;
 using FluentAssertions;
 using Xunit;
@@ -8,10 +9,9 @@ using Xunit;
 // these test should be run on all the modules that have a Domain layer
 // but for now it is only run on the Warehouse module
 // just something to keep in mind when more modules are added
-namespace ArchitectureTests.Modules.Warehouse.Domain;
+namespace ArchitectureTests.Modules.Warehouse;
 public class DomainTests : BaseTest
 {
-
     [Fact]
     public void Entities_Should_HavePrivateParameterLessConstructors()
     {
@@ -33,5 +33,17 @@ public class DomainTests : BaseTest
         }
 
         failingTypes.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Entities_Should_BeSealed()
+    {
+        ArchRuleDefinition
+            .Classes()
+            .That()
+            .AreAssignableTo(typeof(Entity))
+            .Should()
+            .BeSealed()
+            .Check(Architecture);
     }
 }

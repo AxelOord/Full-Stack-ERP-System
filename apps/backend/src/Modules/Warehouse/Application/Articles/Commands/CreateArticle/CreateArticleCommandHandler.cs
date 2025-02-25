@@ -6,7 +6,7 @@ using Warehouse.Domain.Suppliers;
 
 namespace Warehouse.Application.Articles.Commands.CreateArticle;
 
-public class CreateArticleCommandHandler : ICommandHandler<CreateArticleCommand>
+internal sealed class CreateArticleCommandHandler : ICommandHandler<CreateArticleCommand>
 {
     private readonly ISupplierRepository _supplierRepository;
     private readonly ICreateArticleService _createArticleService;

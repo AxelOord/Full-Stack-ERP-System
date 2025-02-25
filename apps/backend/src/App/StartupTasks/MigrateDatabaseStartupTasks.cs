@@ -8,53 +8,53 @@ namespace App.StartupTasks;
 /// </summary>
 internal sealed class MigrateDatabaseStartupTask : BackgroundService
 {
-  private readonly IHostEnvironment _environment;
-  private readonly IServiceProvider _serviceProvider;
+    private readonly IHostEnvironment _environment;
+    private readonly IServiceProvider _serviceProvider;
 
-  /// <summary>
-  /// Initializes a new instance of the <see cref="MigrateDatabaseStartupTask"/> class.
-  /// </summary>
-  /// <param name="environment">The environment.</param>
-  /// <param name="serviceProvider">The service provider.</param>
-  public MigrateDatabaseStartupTask(IHostEnvironment environment, IServiceProvider serviceProvider)
-  {
-    _environment = environment;
-    _serviceProvider = serviceProvider;
-  }
-
-  /// <inheritdoc />
-  protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-  {
-    if (!_environment.IsDevelopment())
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MigrateDatabaseStartupTask"/> class.
+    /// </summary>
+    /// <param name="environment">The environment.</param>
+    /// <param name="serviceProvider">The service provider.</param>
+    public MigrateDatabaseStartupTask(IHostEnvironment environment, IServiceProvider serviceProvider)
     {
-      return;
+        _environment = environment;
+        _serviceProvider = serviceProvider;
     }
 
-    using IServiceScope scope = _serviceProvider.CreateScope();
-
-    await MigrateDatabaseAsync<WarehouseDbContext>(scope, stoppingToken);
-  }
-
-  private static async Task MigrateDatabaseAsync<TDbContext>(IServiceScope scope, CancellationToken cancellationToken)
-      where TDbContext : DbContext
-  {
-    try
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-      TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        if (!_environment.IsDevelopment())
+        {
+            return;
+        }
 
-      // Check if the database exists before applying migrations
-      if (!await dbContext.Database.CanConnectAsync(cancellationToken))
-      {
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
-      }
+        using IServiceScope scope = _serviceProvider.CreateScope();
 
-      // Apply migrations only if the database already exists
-      await dbContext.Database.MigrateAsync(cancellationToken);
+        await MigrateDatabaseAsync<WarehouseDbContext>(scope, stoppingToken);
     }
-    catch (Exception ex)
+
+    private static async Task MigrateDatabaseAsync<TDbContext>(IServiceScope scope, CancellationToken cancellationToken)
+        where TDbContext : DbContext
     {
-      Console.WriteLine($"Database migration failed: {ex.Message}");
+        try
+        {
+            TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+            // Check if the database exists before applying migrations
+            if (!await dbContext.Database.CanConnectAsync(cancellationToken))
+            {
+                await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+            }
+
+            // Apply migrations only if the database already exists
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database migration failed: {ex.Message}");
+        }
     }
-  }
 
 }

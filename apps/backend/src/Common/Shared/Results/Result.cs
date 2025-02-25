@@ -1,20 +1,20 @@
-namespace Shared.Results
+namespace Shared.Results;
+
+public record Result
 {
-  public record Result
-  {
     public bool IsSuccess { get; }
     public Error? Error { get; }
 
     protected Result(bool isSuccess, Error? error = null)
     {
-      if (isSuccess && error is not null)
-        throw new InvalidOperationException("Successful result cannot have an error.");
+        if (isSuccess && error is not null)
+            throw new InvalidOperationException("Successful result cannot have an error.");
 
-      if (!isSuccess && error is null)
-        throw new InvalidOperationException("Failure result must have an error.");
+        if (!isSuccess && error is null)
+            throw new InvalidOperationException("Failure result must have an error.");
 
-      IsSuccess = isSuccess;
-      Error = error;
+        IsSuccess = isSuccess;
+        Error = error;
     }
 
     public static Result Success() => new(true);
@@ -27,5 +27,4 @@ namespace Shared.Results
 
     public static Result<TValue> Create<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(new NullValueError());
-  }
 }

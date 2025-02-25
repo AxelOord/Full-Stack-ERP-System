@@ -5,8 +5,8 @@ namespace Warehouse.Persistence.Constants;
 /// </summary>
 internal static class TableNames
 {
-  /// <summary>
-  /// The articles table.
-  /// </summary>
-  internal const string Articles = "articles";
+    /// <summary>
+    /// The articles table.
+    /// </summary>
+    internal const string Articles = "articles";
 }

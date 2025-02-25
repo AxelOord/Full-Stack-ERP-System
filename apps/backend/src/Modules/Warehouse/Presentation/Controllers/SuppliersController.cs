@@ -4,31 +4,30 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation;
-using Shared.Results.Response;
 using Shared.Extensions;
 using Warehouse.Application.Suppliers.Commands.CreateSupplier;
 using Warehouse.Domain.Suppliers;
-using Warehouse.Domain.Suppliers.Dtos;
+using Warehouse.Domain.Suppliers.Dto;
+using Warehouse.Domain.Suppliers.Request;
 using Warehouse.Persistence;
 
-namespace Warehouse.Presentation.Controllers
+namespace Warehouse.Presentation.Controllers;
+
+public class SuppliersController(IMapper mapper, IMediator mediator, Func<Type, Type, Type, object> factory)
+: BaseController<Supplier, SupplierDto, WarehouseDbContext>(mapper, mediator, factory)
 {
-  public class SuppliersController(IMapper mapper, LinkBuilder linkBuilder, IMediator mediator, Func<Type, Type, Type, object> factory)
-    : BaseController<Supplier, SupplierDto, WarehouseDbContext>(mapper, linkBuilder, mediator, factory)
-  {
 
     /// <summary>
-    /// Create entity
+    /// Create supplier
     /// </summary>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateSupplierDto? dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateSupplierRequest request, CancellationToken cancellationToken)
     {
-      var command = new CreateSupplierCommand(dto!);
-      var result = await _mediator.Send(command, cancellationToken);
+        var command = new CreateSupplierCommand(request);
+        var result = await _mediator.Send(command, cancellationToken);
 
-      return result.ToActionResult(StatusCodes.Status201Created);
+        return result.ToActionResult(StatusCodes.Status201Created);
     }
-  }
 }

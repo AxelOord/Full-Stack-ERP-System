@@ -1,12 +1,13 @@
 using AutoMapper;
 using Domain.Primitives.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Shared.Extensions;
 using System.Text.Json.Serialization;
 
-namespace Shared.Results.Response
+namespace Shared.Results.Response;
+
+public class ApiData<T>
 {
-  public class ApiData<T>
-  {
     [JsonPropertyName("type")]
     public required string Type { get; set; }
 
@@ -19,16 +20,15 @@ namespace Shared.Results.Response
     [JsonPropertyName("links")]
     public required AttributeLinks Links { get; set; }
 
-    public static ApiData<TDestination> CreateApiData<TSource, TDestination>(TSource entity, IMapper mapper, LinkBuilder linkBuilder, HttpRequest request)
+    public static ApiData<TDestination> CreateApiData<TSource, TDestination>(TSource entity, IMapper mapper, HttpRequest request)
      where TSource : IEntity
     {
-      return new ApiData<TDestination>
-      {
-        Type = typeof(TSource).Name.ToLower(),
-        Id = entity.Id,
-        Attributes = mapper.Map<TDestination>(entity),
-        Links = linkBuilder.CreateDtoLinks(request, typeof(TSource).Name.ToLower(), entity.Id)
-      };
+        return new ApiData<TDestination>
+        {
+            Type = typeof(TSource).Name.ToLower(),
+            Id = entity.Id,
+            Attributes = mapper.Map<TDestination>(entity),
+            Links = request.CreateDtoLinks(typeof(TSource).Name.ToLower(), entity.Id)
+        };
     }
-  }
 }

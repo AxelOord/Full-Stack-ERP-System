@@ -10,13 +10,13 @@ namespace Warehouse.Infrastructure;
 /// </summary>
 public sealed class WarehouseModuleInstaller : IModuleInstaller
 {
-  /// <inheritdoc />
-  public void Install(IServiceCollection services, IConfiguration configuration) =>
-      services
-          .InstallServicesFromAssemblies(configuration, AssemblyReference.Assembly)
-          //.AddTransientAsMatchingInterfaces(AssemblyReference.Assembly)
-          //.AddTransientAsMatchingInterfaces(Persistence.AssemblyReference.Assembly)
-          .AddScopedAsMatchingInterfaces(AssemblyReference.Assembly)
-          .AddScopedAsMatchingInterfaces(Persistence.AssemblyReference.Assembly);
+    /// <inheritdoc />
+    public void Install(IServiceCollection services, IConfiguration configuration) =>
+        services
+            .InstallServicesFromAssemblies(configuration, AssemblyReference.Assembly)
+            //.AddTransientAsMatchingInterfaces(AssemblyReference.Assembly)
+            //.AddTransientAsMatchingInterfaces(Persistence.AssemblyReference.Assembly)
+            .AddScopedAsMatchingInterfaces(AssemblyReference.Assembly)
+            .AddScopedAsMatchingInterfaces(Persistence.AssemblyReference.Assembly);
 }
 

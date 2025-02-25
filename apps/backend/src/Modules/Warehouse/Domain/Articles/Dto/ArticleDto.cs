@@ -2,14 +2,18 @@ using Domain.Primitives.Interfaces;
 using Shared.Results.Response;
 using System.ComponentModel.DataAnnotations;
 
-namespace Warehouse.Domain.Suppliers.Dtos
+namespace Warehouse.Domain.Articles.Dto;
+
+public class ArticleDto : IDto
 {
-  public class SupplierDto : IDto
-  {
-    [Required]
-    [TranslationKey("COLUMN_NAME_SBN_ID")]
+    [TranslationKey("COLUMN_NAME_SUPPLIER_NAME")]
     [Sortable]
-    public required int SbnId { get; set; }
+    public required string SupplierName { get; set; }
+
+    [Required]
+    [TranslationKey("COLUMN_NAME_ARTICLE_NUMBER")]
+    [Sortable]
+    public required string ArticleNumber { get; set; }
 
     [Required]
     [TranslationKey("COLUMN_NAME_NAME")]
@@ -19,5 +23,4 @@ namespace Warehouse.Domain.Suppliers.Dtos
     [TranslationKey("COLUMN_NAME_IS_ACTIVE")]
     [Sortable]
     public bool IsActive { get; set; }
-  }
 }

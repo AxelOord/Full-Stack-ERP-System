@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace Modules.Users.Infrastructure.ServiceInstallers;
+namespace Warehouse.Infrastructure.ServiceInstallers;
 
 /// <summary>
 /// Represents the warehouse module presentation service installer.
@@ -14,5 +14,5 @@ internal sealed class PresentationServiceInstaller : IServiceInstaller
     public void Install(IServiceCollection services, IConfiguration configuration) =>
         services
             .AddControllers()
-            .AddApplicationPart(Warehouse.Presentation.AssemblyReference.Assembly);
+            .AddApplicationPart(Presentation.AssemblyReference.Assembly);
 }

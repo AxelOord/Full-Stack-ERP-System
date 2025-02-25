@@ -10,10 +10,10 @@ namespace Persistence;
 /// </summary>
 internal sealed class PersistenceServiceInstaller : IServiceInstaller
 {
-  /// <inheritdoc />
-  public void Install(IServiceCollection services, IConfiguration configuration) =>
-      services
-          .AddMemoryCache()
-          .ConfigureOptions<ConnectionStringSetup>();
-          //.AddTransientAsMatchingInterfaces(AssemblyReference.Assembly);
+    /// <inheritdoc />
+    public void Install(IServiceCollection services, IConfiguration configuration) =>
+        services
+            .AddMemoryCache()
+            .ConfigureOptions<ConnectionStringSetup>();
+    //.AddTransientAsMatchingInterfaces(AssemblyReference.Assembly);
 }

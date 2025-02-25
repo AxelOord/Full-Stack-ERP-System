@@ -1,11 +1,11 @@
 using Domain.Primitives.Interfaces;
 using System.Linq.Expressions;
 
-namespace Domain.Specifications
+namespace Domain.Specifications;
+
+public interface ISpecification<TEntity>
+    where TEntity : IEntity
 {
-  public interface ISpecification<TEntity>
-        where TEntity : IEntity
-  {
     Expression<Func<TEntity, bool>> Criteria { get; }
 
     List<SortOrder<TEntity>> OrderBy { get; }
@@ -14,5 +14,4 @@ namespace Domain.Specifications
     int Take { get; }
 
     List<Expression<Func<TEntity, object>>> Includes { get; }
-  }
 }

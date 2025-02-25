@@ -1,6 +1,5 @@
-namespace Warehouse.Application.Articles
+namespace Warehouse.Application.Articles;
+
+public interface IArticleRepository
 {
-  public interface IArticleRepository
-  {
-  }
 }

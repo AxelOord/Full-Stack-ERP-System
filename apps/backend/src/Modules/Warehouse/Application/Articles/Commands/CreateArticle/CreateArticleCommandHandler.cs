@@ -4,30 +4,29 @@ using Warehouse.Application.Suppliers;
 using Warehouse.Domain.Articles;
 using Warehouse.Domain.Suppliers;
 
-namespace Warehouse.Application.Articles.Commands.CreateArticle
+namespace Warehouse.Application.Articles.Commands.CreateArticle;
+
+public class CreateArticleCommandHandler : ICommandHandler<CreateArticleCommand>
 {
-  public class CreateArticleCommandHandler : ICommandHandler<CreateArticleCommand>
-  {
     private readonly ISupplierRepository _supplierRepository;
     private readonly ICreateArticleService _createArticleService;
 
     public CreateArticleCommandHandler(ICreateArticleService createArticleService, ISupplierRepository supplierRepository)
     {
-      _createArticleService = createArticleService;
-      _supplierRepository = supplierRepository;
+        _createArticleService = createArticleService;
+        _supplierRepository = supplierRepository;
     }
 
-    public async Task<Result> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreateArticleCommand command, CancellationToken cancellationToken)
     {
-      var supplier = await _supplierRepository.GetByIdAsync(request.Dto.SupplierId, cancellationToken);
-      if (supplier is null)
-      {
-        return Result.Failure(new NotFoundError(nameof(Supplier)));
-      }
+        var supplier = await _supplierRepository.GetByIdAsync(command.Request.SupplierId, cancellationToken);
+        if (supplier is null)
+        {
+            return Result.Failure(new NotFoundError(nameof(Supplier)));
+        }
 
-      var result = await _createArticleService.ExecuteAsync(Article.Create(request.Dto, supplier), cancellationToken);
+        var result = await _createArticleService.ExecuteAsync(Article.Create(command.Request, supplier), cancellationToken);
 
-      return result;
+        return result;
     }
-  }
 }

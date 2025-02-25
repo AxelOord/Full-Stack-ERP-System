@@ -1,7 +1,6 @@
 using Application.Messaging.Commands;
-using Warehouse.Domain.Articles.Dtos;
+using Warehouse.Domain.Articles.Request;
 
-namespace Warehouse.Application.Articles.Commands.CreateArticle
-{
-  public sealed record CreateArticleCommand(CreateArticleDto Dto) : ICommand;
-}
+namespace Warehouse.Application.Articles.Commands.CreateArticle;
+
+public sealed record CreateArticleCommand(CreateArticleRequest Request) : ICommand;

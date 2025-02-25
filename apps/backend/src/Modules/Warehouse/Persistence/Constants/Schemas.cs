@@ -5,8 +5,8 @@ namespace Warehouse.Persistence.Constants;
 /// </summary>
 public static class Schemas
 {
-  /// <summary>
-  /// The users schema.
-  /// </summary>
-  public const string Warehouse = "warehouse";
+    /// <summary>
+    /// The users schema.
+    /// </summary>
+    public const string Warehouse = "warehouse";
 }

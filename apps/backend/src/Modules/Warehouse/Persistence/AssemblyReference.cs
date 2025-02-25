@@ -7,8 +7,8 @@ namespace Warehouse.Persistence;
 /// </summary>
 public static class AssemblyReference
 {
-  /// <summary>
-  /// The assembly.
-  /// </summary>
-  public static readonly Assembly Assembly = typeof(AssemblyReference).Assembly;
+    /// <summary>
+    /// The assembly.
+    /// </summary>
+    public static readonly Assembly Assembly = typeof(AssemblyReference).Assembly;
 }

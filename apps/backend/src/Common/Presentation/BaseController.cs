@@ -1,32 +1,30 @@
-using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using Application.Generics.Delete;
-using Domain.Specifications;
 using Application.Generics.GetAll;
 using Application.Generics.GetById;
+using AutoMapper;
 using Domain.Primitives.Interfaces;
+using Domain.Specifications;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Shared.Results.Response;
-using Shared.Results.PaginatedResponse;
-using Shared.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
+using Shared.Results.PaginatedResponse;
+using Shared.Results.Response;
 
-namespace Presentation
+namespace Presentation;
+
+[ApiController]
+[Route("api/[controller]")]
+public abstract class BaseController<TEntity, TDto, TDbContext>(IMapper mapper,
+                       IMediator mediator,
+                       Func<Type, Type, Type, object> factory) : ControllerBase
+where TDbContext : DbContext
+where TEntity : class, IEntity
+where TDto : IDto
 {
-  [ApiController]
-  [Route("api/[controller]")]
-  public abstract class BaseController<TEntity, TDto, TDbContext>(IMapper mapper,
-                           LinkBuilder linkBuilder,
-                           IMediator mediator,
-                           Func<Type, Type, Type, object> factory) : ControllerBase
-    where TDbContext: DbContext
-    where TEntity : class, IEntity
-    where TDto : IDto
-  {
     protected readonly IMediator _mediator = mediator;
     protected readonly IMapper _mapper = mapper;
-    protected readonly LinkBuilder _linkBuilder = linkBuilder;
 
     private readonly Func<Type, Type, Type, object> _factory = factory;
 
@@ -49,11 +47,11 @@ namespace Presentation
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Response<TDto>>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-      var query = new GetByIdQuery<TEntity>(id);
-      var result = await _getByIdService.ExecuteAsync(query, cancellationToken);
-      var mapperStrategy = new SingleEntityMapper<TEntity, TDto>();
+        var query = new GetByIdQuery<TEntity>(id);
+        var result = await _getByIdService.ExecuteAsync(query, cancellationToken);
+        var mapperStrategy = new SingleEntityMapper<TEntity, TDto>();
 
-      return result.ToActionResult(_mapper, mapperStrategy, _linkBuilder, Request);
+        return result.ToActionResult(_mapper, mapperStrategy, Request);
     }
 
     /// <summary>
@@ -64,13 +62,13 @@ namespace Presentation
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PaginatedResponse<TDto>>> GetAllAsync([FromQuery] GetAllQueryParameters queryParameters, CancellationToken cancellationToken)
     {
-      var specification = new GetAllEntitiesSpecification<TEntity>(queryParameters);
+        var specification = new GetAllEntitiesSpecification<TEntity>(queryParameters);
 
-      var query = new GetAllQuery<TEntity>(specification);
-      var result = await _getAllService.ExecuteAsync(query, cancellationToken);
-      var mapperStrategy = new CollectionEntityMapper<TEntity, TDto>();
+        var query = new GetAllQuery<TEntity>(specification);
+        var result = await _getAllService.ExecuteAsync(query, cancellationToken);
+        var mapperStrategy = new CollectionEntityMapper<TEntity, TDto>();
 
-      return result.ToActionResult(_mapper, mapperStrategy, _linkBuilder, Request);
+        return result.ToActionResult(_mapper, mapperStrategy, Request);
     }
 
     /// <summary>
@@ -82,10 +80,9 @@ namespace Presentation
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-      var command = new DeleteCommand<TEntity>(id);
-      var result = await _deleteService.ExecuteAsync(command, cancellationToken);
+        var command = new DeleteCommand<TEntity>(id);
+        var result = await _deleteService.ExecuteAsync(command, cancellationToken);
 
-      return result.ToActionResult();
+        return result.ToActionResult();
     }
-  }
 }

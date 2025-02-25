@@ -1,11 +1,8 @@
-using System.Runtime.InteropServices;
+namespace Domain.Primitives.Interfaces;
 
-namespace Domain.Primitives.Interfaces
+public interface IEntity
 {
-  public interface IEntity
-  {
     Guid Id { get; }
     DateTime InsertDate { get; }
     DateTime UpdateDate { get; }
-  }
 }

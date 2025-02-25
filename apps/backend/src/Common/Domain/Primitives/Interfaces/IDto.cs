@@ -1,6 +1,5 @@
-namespace Domain.Primitives.Interfaces
+namespace Domain.Primitives.Interfaces;
+
+public interface IDto
 {
-  public interface IDto
-  {
-  }
 }

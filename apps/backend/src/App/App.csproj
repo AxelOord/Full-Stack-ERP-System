@@ -27,10 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Common\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Common\Shared\Shared.csproj" />
     <ProjectReference Include="..\Modules\Warehouse\Infrastructure\Warehouse.Infrastructure.csproj" />

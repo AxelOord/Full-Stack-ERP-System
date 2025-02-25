@@ -8,10 +8,10 @@ namespace Infrastructure.Configurations;
 /// </summary>
 public interface IModuleInstaller
 {
-  /// <summary>
-  /// Installs the module using the specified service collection.
-  /// </summary>
-  /// <param name="services">The service collection.</param>
-  /// <param name="configuration">The configuration.</param>
-  public void Install(IServiceCollection services, IConfiguration configuration);
+    /// <summary>
+    /// Installs the module using the specified service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The configuration.</param>
+    public void Install(IServiceCollection services, IConfiguration configuration);
 }

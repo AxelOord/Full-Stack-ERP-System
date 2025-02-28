@@ -44,9 +44,49 @@ This repository contains a full-stack Enterprise Resource Planning (ERP) system 
    - Backend API: http://localhost:5135
    - API Documentation: http://localhost:5135/swagger
 
-### Manual Setup
+## Nx Commands
 
-#### Backend
+This project uses Nx for workspace management and task execution. Here are the key commands you can use:
+
+### Run local
+Use this to build, create image and start container all in one using the nx build tools (using caching and all other usefull nx features)
+```bash
+npm run local
+```
+
+### Backend
+
+```bash
+# Build
+nx serve backend
+```
+```bash
+# Build a Docker container for the backend
+nx container backend
+```
+```bash
+# Run backend tests --not working yet
+nx test backend
+```
+
+### Frontend
+
+```bash
+# Run dev with --watch enabled
+nx serve frontend
+```
+```bash
+# Build a Docker container for the frontend
+nx container frontend
+```
+```bash
+# Run frontend tests --not working yet
+nx test frontend
+```
+
+## Manual Setup
+
+### Backend
 
 1. Navigate to the backend directory
    ```bash
@@ -65,7 +105,7 @@ This repository contains a full-stack Enterprise Resource Planning (ERP) system 
    dotnet run
    ```
 
-#### Frontend
+### Frontend
 
 1. Navigate to the frontend directory
    ```bash
@@ -120,4 +160,4 @@ The frontend uses Next.js App Router with:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License

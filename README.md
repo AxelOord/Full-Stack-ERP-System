@@ -122,6 +122,25 @@ nx test frontend
    npm run dev
    ```
 
+## API Generation
+```bash
+# Generate API client from OpenAPI spec
+nx run frontend:generate-api
+```
+
+## Workspace Commands
+```bash
+# Run the entire application stack using Docker
+nx run-many -t serve -p backend frontend
+```
+
+## Graph dependency visualization
+```bash
+nx graph
+```
+
+You can find more specific configuration details in the nx.json file at the root of the project and individual project.json files within each application directory.
+
 ## Project Structure
 
 ```

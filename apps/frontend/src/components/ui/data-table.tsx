@@ -6,6 +6,8 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
@@ -18,73 +20,100 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import React, { useMemo } from "react"
+import React, { Suspense, useMemo } from "react"
 import { createColumns } from "./columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "./skeleton"
 import Loader from "../shared/loader"
 import TableToolbar from "./table-toolbar"
 import Pagination from "./pagination"
+import { useDataTableFilters } from "@/hooks/useDataTableFilters";
+import { BaseDto } from "@/services/models/BaseDto"
 
-interface DataTableContextValue<T extends object> {
-  table: ReturnType<typeof useReactTable<any>> | null;
-  data: PaginatedResponse<T> | null;
+interface DataTableContextValue<TDto extends BaseDto> {
+  table: ReturnType<typeof useReactTable<TDto>> | null;
+  data: PaginatedResponse<TDto> | null;
   isLoading: boolean;
-  columns: ColumnDef<ApiData<T>>[];
+  columns: ColumnDef<ApiData<TDto>>[];
   onSearch: ((searchTerm: string) => void) | null;
-  onFilter?: (column: string, value: string) => void;
   onPaginate: (link?: Link) => void;
-  updateContext: (newState: Partial<DataTableContextState<T>>) => void;
+  onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
+  updateContext: (newState: Partial<DataTableContextState<TDto>>) => void;
+  filters: ReturnType<typeof useDataTableFilters>;
 }
 
-interface DataTableContextState<T extends object> {
-  table: ReturnType<typeof useReactTable<any>> | null;
-  data: PaginatedResponse<T> | null;
+interface DataTableContextState<TDto extends BaseDto> {
+  table: ReturnType<typeof useReactTable<TDto>> | null;
+  data: PaginatedResponse<TDto> | null;
   isLoading: boolean;
-  columns: ColumnDef<ApiData<T>>[];
+  columns: ColumnDef<ApiData<TDto>>[];
   onSearch: ((searchTerm: string) => void) | null;
-  onFilter?: (column: string, value: string) => void;
   onPaginate: (link?: Link) => void;
+  onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
 }
 
-const DataTableContext = React.createContext<DataTableContextValue<any> | undefined>(undefined);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const DataTableContext = React.createContext<any>(undefined);
 
-function useDataTable<T extends object>() {
+function useDataTable<TDto extends BaseDto>(): DataTableContextValue<TDto> {
   const context = React.useContext(DataTableContext);
   if (!context) {
     throw new Error("useDataTable must be used within a DataTable");
   }
-  return context as DataTableContextValue<T>;
+  return context as DataTableContextValue<TDto>;
 }
 
 interface DataTableProps {
   children?: React.ReactNode;
 }
 
-const DataTable = ({ children }: DataTableProps) => {
-  const [state, setState] = React.useState<DataTableContextState<any>>({
+function DataTable<TDto extends object>({ children }: DataTableProps) {
+  const [state, setState] = React.useState<DataTableContextState<TDto>>({
     table: null,
     data: null,
     isLoading: true,
     columns: [],
     onSearch: null,
-    onPaginate: () => {},
+    onPaginate: () => { },
+    onFilter: undefined,
   });
 
-  const updateContext = React.useCallback((newState: Partial<DataTableContextState<any>>) => {
+  const updateContext = React.useCallback((newState: Partial<DataTableContextState<TDto>>) => {
     setState(prevState => ({ ...prevState, ...newState }));
   }, []);
+
+  const getActiveFiltersRef = React.useRef<(() => Record<string, { operator: string; value: string }[]>) | null>(null);
+  const onFilterRef = React.useRef<typeof state.onFilter>(state.onFilter);
+
+  React.useEffect(() => {
+    onFilterRef.current = state.onFilter;
+  }, [state.onFilter]);
+
+  const handleFilter = React.useCallback((activeFilters: Record<string, { operator: string; value: string }[]>) => {
+    if (onFilterRef.current) {
+      onFilterRef.current(activeFilters);
+    }
+  }, []);
+
+  const filterFunctions = useDataTableFilters(handleFilter);
+
+  React.useEffect(() => {
+    getActiveFiltersRef.current = filterFunctions.getActiveFilters;
+  }, [filterFunctions]);
+
 
   const contextValue = React.useMemo(
     () => ({
       ...state,
       updateContext,
+      filters: filterFunctions
     }),
-    [state, updateContext]
+    [state, updateContext, filterFunctions]
   );
 
   return (
     <DataTableContext.Provider value={contextValue}>
+      <Loader isLoading={state.isLoading} />
       <div className="w-full flex flex-col h-full">
         {children}
       </div>
@@ -95,7 +124,7 @@ const DataTable = ({ children }: DataTableProps) => {
 interface DataTableContentProps<T extends object> {
   children?: React.ReactNode;
   data: PaginatedResponse<T> | null;
-  onFilter?: (column: string, value: string) => void;
+  onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
 }
 
 DataTable.Content = function DataTableContent<T extends object>({
@@ -103,13 +132,14 @@ DataTable.Content = function DataTableContent<T extends object>({
   data,
   onFilter,
 }: DataTableContentProps<T>) {
-  const { updateContext, isLoading: contextIsLoading } = useDataTable<T>();
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const { updateContext, isLoading: contextIsLoading, filters } = useDataTable<T>();
 
   React.useEffect(() => {
     updateContext({
       isLoading: true
     });
-    
+
     // When component unmounts, reset loading state
     return () => {
       updateContext({
@@ -128,7 +158,7 @@ DataTable.Content = function DataTableContent<T extends object>({
     [isLoading, data]
   );
 
-  const loadingColumns: ColumnDef<ApiData<T>>[] = React.useMemo(() => 
+  const loadingColumns: ColumnDef<ApiData<T>>[] = React.useMemo(() =>
     Array(4).fill(null).map((_, index) => ({
       id: `loading-${index}`,
       header: () => <Skeleton className="h-4 w-20" />,
@@ -138,11 +168,15 @@ DataTable.Content = function DataTableContent<T extends object>({
 
   const columnsMemo = useMemo(
     () => (
-      isLoading 
-        ? loadingColumns 
-        : createColumns<T>(data?.metadata?.columns || [], onFilter)
+      isLoading
+        ? loadingColumns
+        : createColumns<T>(
+          data?.metadata?.columns || [],
+          filters.applyFilter,
+          filters.getFilterValue
+        )
     ),
-    [isLoading, data?.metadata?.columns, loadingColumns, onFilter]
+    [isLoading, data?.metadata?.columns, loadingColumns, filters]
   );
 
   const table = useReactTable({
@@ -151,35 +185,25 @@ DataTable.Content = function DataTableContent<T extends object>({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
     state: {
       columnFilters,
       columnVisibility,
+      sorting,
     },
   });
 
-  const contextRef = React.useRef({
-    data: null as PaginatedResponse<T> | null,
-    table: null as ReturnType<typeof useReactTable<any>> | null
-  });
-  
   React.useEffect(() => {
-    if (
-      data !== contextRef.current.data ||
-      table !== contextRef.current.table
-    ) {
-      contextRef.current.data = data;
-      contextRef.current.table = table;
-      
-      updateContext({
-        data,
-        isLoading: !data || !data?.metadata,
-        columns: columnsMemo,
-        table,
-        onFilter
-      });
-    }
-  }, [data, isLoading, columnsMemo, table, updateContext, onFilter]);
+    updateContext({
+      data,
+      isLoading: !data || !data?.metadata,
+      columns: columnsMemo,
+      table,
+      onFilter
+    });
+  }, [data, columnsMemo, table, updateContext, onFilter]);
 
   return (
     <div className="flex-grow overflow-auto">
@@ -190,45 +214,60 @@ DataTable.Content = function DataTableContent<T extends object>({
   );
 };
 
-DataTable.Loader = function DataTableLoader() {
-  const { isLoading } = useDataTable();
-  return <Loader isLoading={isLoading} />;
-};
-
 interface DataTableToolbarProps {
   onSearch?: ((searchTerm: string) => void) | null;
 }
 
-DataTable.Toolbar = function DataTableToolbar({
+DataTable.Toolbar = function DataTableToolbar<TDto extends BaseDto>({
   onSearch,
 }: DataTableToolbarProps = {}) {
-  const { table, onSearch: contextOnSearch, isLoading } = useDataTable();
-  
-  // Use prop if provided, otherwise fall back to context
+  const { table, onSearch: contextOnSearch, isLoading, filters } = useDataTable<TDto>();
+
   const searchHandler = onSearch !== undefined ? onSearch : contextOnSearch;
 
   const skeletonTable = {
-    getAllColumns: () => Array(4).fill(0).map((_, i) => ({ 
+    getAllColumns: () => Array(4).fill(0).map((_, i) => ({
       id: `skeleton-column-${i}`,
       getCanHide: () => true,
-      getToggleVisibilityHandler: () => () => {},
-      toggleVisibility: () => {},
+      getToggleVisibilityHandler: () => () => { },
+      toggleVisibility: () => { },
       getIsVisible: () => true
     })),
     getColumn: () => null,
   };
-  
-  if (isLoading || !table || typeof table.getHeaderGroups !== 'function') {
-    return <TableToolbar 
-      table={skeletonTable as any} 
-      onInputChange={null} 
-    />;
-  }
 
-  return <TableToolbar 
-    table={table} 
-    onInputChange={searchHandler === undefined ? null : searchHandler}
-  />;
+  // should be done with supsense only
+  const tableInstance = (isLoading || !table || typeof table.getHeaderGroups !== 'function')
+  ? (skeletonTable as unknown) as NonNullable<typeof table>
+  : table;
+
+  return (
+    <Suspense fallback={
+      <TableToolbar
+            table={(skeletonTable as unknown) as NonNullable<typeof table>}
+            onRemoveCommand={filters.removeCommand}
+            onClearCommands={filters.clearAllFilters}
+            onOperatorChange={filters.changeOperator}
+            onValueChange={filters.updateFilterValue}
+          ></TableToolbar>
+    }>
+      <TableToolbar
+            table={tableInstance}
+            onRemoveCommand={filters.removeCommand}
+            onClearCommands={filters.clearAllFilters}
+            onOperatorChange={filters.changeOperator}
+            onValueChange={filters.updateFilterValue}
+          >
+        <TableToolbar.Left>
+          <TableToolbar.Search onInputChange={searchHandler === null ? undefined : searchHandler} />
+          <TableToolbar.Commands />
+        </TableToolbar.Left>
+        <TableToolbar.Right>
+          <TableToolbar.Visibility />
+        </TableToolbar.Right>
+      </TableToolbar>
+    </Suspense>
+  );
 };
 
 interface DataTableContainerProps {
@@ -243,7 +282,7 @@ DataTable.Container = function DataTableContainer({
 
 DataTable.Header = function DataTableHeader() {
   const { table, isLoading } = useDataTable();
-  
+
   // Show skeleton header if we're loading or don't have a valid table instance
   if (isLoading || !table || typeof table.getHeaderGroups !== 'function') {
     return (
@@ -258,7 +297,7 @@ DataTable.Header = function DataTableHeader() {
       </TableHeader>
     );
   }
-  
+
   return (
     <TableHeader>
       {table.getHeaderGroups().map((headerGroup) => (
@@ -268,9 +307,9 @@ DataTable.Header = function DataTableHeader() {
               {header.isPlaceholder
                 ? null
                 : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
             </TableHead>
           ))}
         </TableRow>
@@ -281,7 +320,7 @@ DataTable.Header = function DataTableHeader() {
 
 DataTable.Body = function DataTableBody() {
   const { table, columns, isLoading } = useDataTable();
-  
+
   if (isLoading || !table || typeof table.getRowModel !== 'function') {
     return (
       <TableBody className="overflow-y-auto mx-auto w-full">
@@ -297,7 +336,7 @@ DataTable.Body = function DataTableBody() {
       </TableBody>
     );
   }
-  
+
   return (
     <TableBody className="overflow-y-auto mx-auto w-full">
       {table.getRowModel().rows?.length ? (
@@ -337,7 +376,7 @@ DataTable.Pagination = function DataTablePagination({
   onPaginate,
 }: DataTablePaginationProps = {}) {
   const { data, onPaginate: contextOnPaginate, isLoading } = useDataTable();
-  
+
   // Use prop if provided, otherwise fall back to context
   const paginateHandler = onPaginate || contextOnPaginate;
 
@@ -354,10 +393,10 @@ DataTable.Pagination = function DataTablePagination({
       </div>
     );
   }
-  
+
   const nextPage = data.links.next ? () => paginateHandler(data.links.next) : undefined;
   const prevPage = data.links.prev ? () => paginateHandler(data.links.prev) : undefined;
-  
+
   return (
     <div className="sticky bottom-0 w-full bg-background border-t">
       <Pagination
@@ -368,42 +407,42 @@ DataTable.Pagination = function DataTablePagination({
   );
 };
 
-interface DataTableRowProps {
-  row: any;
-  children?: React.ReactNode;
-}
+// interface DataTableRowProps {
+//   row: any;
+//   children?: React.ReactNode;
+// }
 
-DataTable.Row = function DataTableRow({
-  row,
-  children,
-}: DataTableRowProps) {
-  return (
-    <TableRow
-      className="flex"
-      key={row.id}
-      data-state={row.getIsSelected() && "selected"}
-    >
-      {children ?? row.getVisibleCells().map((cell: any) => (
-        <DataTable.Cell key={cell.id} cell={cell} />
-      ))}
-    </TableRow>
-  );
-};
+// DataTable.Row = function DataTableRow({
+//   row,
+//   children,
+// }: DataTableRowProps) {
+//   return (
+//     <TableRow
+//       className="flex"
+//       key={row.id}
+//       data-state={row.getIsSelected() && "selected"}
+//     >
+//       {children ?? row.getVisibleCells().map((cell: any) => (
+//         <DataTable.Cell key={cell.id} cell={cell} />
+//       ))}
+//     </TableRow>
+//   );
+// };
 
-interface DataTableCellProps {
-  cell: any; // FIXME: no any's!
-  children?: React.ReactNode;
-}
+// interface DataTableCellProps {
+//   cell: any; // FIXME: no any's!
+//   children?: React.ReactNode;
+// }
 
-DataTable.Cell = function DataTableCell({
-  cell,
-  children,
-}: DataTableCellProps) {
-  return (
-    <TableCell className="flex-1" key={cell.id}>
-      {children ?? flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </TableCell>
-  );
-};
+// DataTable.Cell = function DataTableCell({
+//   cell,
+//   children,
+// }: DataTableCellProps) {
+//   return (
+//     <TableCell className="flex-1" key={cell.id}>
+//       {children ?? flexRender(cell.column.columnDef.cell, cell.getContext())}
+//     </TableCell>
+//   );
+// };
 
 export { DataTable, useDataTable };

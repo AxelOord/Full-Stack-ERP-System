@@ -33,27 +33,17 @@ export class ArticlesService {
 	/**
 	 * @param pageNumber
 	 * @param pageSize
-	 * @param filterProperty
-	 * @param filterValue
 	 * @param orderBy
 	 * @param isDescending
-	 * @param filterDefinitionRootGroupCriteria
-	 * @param filterDefinitionRootGroupGroups
-	 * @param filterDefinitionRootGroupLogicalOperator
-	 * @param rawFilters
+	 * @param rawFilters Object containing filters in bracket notation format (e.g., {"name[contains]": "value"})
 	 * @returns PaginatedResponse<ArticleDto> OK
 	 * @throws ApiError
 	 */
 	public static getApiArticles(
 		pageNumber?: number,
 		pageSize?: number,
-		filterProperty?: string,
-		filterValue?: string,
 		orderBy?: string,
 		isDescending?: boolean,
-		filterDefinitionRootGroupCriteria?: Array<FilterCriteria>,
-		filterDefinitionRootGroupGroups?: Array<FilterGroup>,
-		filterDefinitionRootGroupLogicalOperator?: string,
 		rawFilters?: Record<string, string>,
 	): CancelablePromise<PaginatedResponse<ArticleDto>> {
 		return __request(OpenAPI, {
@@ -62,14 +52,9 @@ export class ArticlesService {
 			query: {
 				'PageNumber': pageNumber,
 				'PageSize': pageSize,
-				'FilterProperty': filterProperty,
-				'FilterValue': filterValue,
 				'OrderBy': orderBy,
 				'IsDescending': isDescending,
-				'FilterDefinition.RootGroup.Criteria': filterDefinitionRootGroupCriteria,
-				'FilterDefinition.RootGroup.Groups': filterDefinitionRootGroupGroups,
-				'FilterDefinition.RootGroup.LogicalOperator': filterDefinitionRootGroupLogicalOperator,
-				'RawFilters': rawFilters,
+				...rawFilters, // Spread the rawFilters object to include all bracket notation filters
 			},
 			errors: {
 				400: `Bad Request`,

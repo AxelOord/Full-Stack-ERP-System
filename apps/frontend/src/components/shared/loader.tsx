@@ -13,9 +13,9 @@ const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
       // In the overlay div's style object, update these properties:
       // Update the overlay div's style to make dots more visible
       style={{
-        backdropFilter: 'blur(2px)',
+        backdropFilter: 'blur(3px)',
         backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        backgroundImage: 'radial-gradient(circle, rgba(150,150,150,0.35) 2px, transparent 2px)',
+        backgroundImage: 'radial-gradient(circle, rgba(150,150,150,0.45) 2px, transparent 2px)',
         backgroundSize: '60px 60px',
         boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.1)',
         border: '1px solid rgba(255, 255, 255, 0.18)'

@@ -3,7 +3,6 @@ using Application.Generics.GetAll;
 using Application.Generics.GetById;
 using AutoMapper;
 using Domain.Primitives.Interfaces;
-using Domain.Specifications;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
 using Shared.Results.PaginatedResponse;
 using Shared.Results.Response;
+using Shared.Specifications;
 
 namespace Presentation;
 

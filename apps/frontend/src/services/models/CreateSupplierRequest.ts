@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateSupplierDto = {
+export type CreateSupplierRequest = {
 	sbnId: number;
 	name: string;
-	isActive?: boolean;
+	isActive: boolean;
 };
 

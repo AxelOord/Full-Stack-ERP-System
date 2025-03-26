@@ -41,6 +41,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi(options =>
 {
     options.AddSchemaTransformer<NullableSchemaTransformer>();
+    options.AddSchemaTransformer<RecursiveReferenceSchemaTransformer>();
 });
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true); // TODO: should be conf

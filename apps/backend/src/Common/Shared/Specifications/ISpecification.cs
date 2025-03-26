@@ -1,7 +1,7 @@
 using Domain.Primitives.Interfaces;
 using System.Linq.Expressions;
 
-namespace Domain.Specifications;
+namespace Shared.Specifications;
 
 public interface ISpecification<TEntity>
     where TEntity : IEntity

@@ -13,6 +13,7 @@ public static class MetadataGenerator
 
         foreach (var prop in properties)
         {
+            var filterPathAttr = prop.GetCustomAttribute<FilterPathAttribute>();
             var column = new Column
             {
                 Field = $"{char.ToLowerInvariant(prop.Name[0])}{prop.Name[1..]}"

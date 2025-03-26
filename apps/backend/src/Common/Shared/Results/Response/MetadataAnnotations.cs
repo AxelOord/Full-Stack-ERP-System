@@ -6,28 +6,23 @@ using System;
 public class TranslationKeyAttribute : Attribute
 {
     public string Value { get; }
-    public TranslationKeyAttribute(string value)
-    {
-        Value = value;
-    }
+    public TranslationKeyAttribute(string value) => Value = value;
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class SortableAttribute : Attribute
+public class SortableAttribute(bool value = true) : Attribute
 {
-    public bool Value { get; }
-    public SortableAttribute(bool value = true)
-    {
-        Value = value;
-    }
+    public bool Value { get; } = value;
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class DataTypeAttribute : Attribute
+public class DataTypeAttribute(string value) : Attribute
 {
-    public string Value { get; }
-    public DataTypeAttribute(string value)
-    {
-        Value = value;
-    }
+    public string Value { get; } = value;
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public class FilterPathAttribute(string path) : Attribute
+{
+    public string Path { get; } = path;
 }

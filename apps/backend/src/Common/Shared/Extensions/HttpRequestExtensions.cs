@@ -27,10 +27,10 @@ public static class HttpRequestExtensions
 
         // Create route parameters
         var routeParams = new Dictionary<string, object>
-    {
-        { "pageNumber", currentPage },
-        { "pageSize", pageSize }
-    };
+        {
+            { "pageNumber", currentPage },
+            { "pageSize", pageSize }
+        };
 
         // Add filters if present
         if (!string.IsNullOrWhiteSpace(filterProperty))

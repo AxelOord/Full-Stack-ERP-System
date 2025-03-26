@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateSupplierDto } from '../models/CreateSupplierDto';
+import type { CreateSupplierRequest } from '../models/CreateSupplierRequest';
+import type { FilterCriteria } from '../models/FilterCriteria';
+import type { FilterGroup } from '../models/FilterGroup';
 import type { PaginatedResponse } from '../models/PaginatedResponse';
 import type { Response } from '../models/Response';
 import type { SupplierDto } from '../models/SupplierDto';
@@ -16,7 +18,7 @@ export class SuppliersService {
 	 * @throws ApiError
 	 */
 	public static postApiSuppliers(
-		requestBody?: CreateSupplierDto,
+		requestBody: CreateSupplierRequest,
 	): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
@@ -35,6 +37,10 @@ export class SuppliersService {
 	 * @param filterValue
 	 * @param orderBy
 	 * @param isDescending
+	 * @param filterDefinitionRootGroupCriteria
+	 * @param filterDefinitionRootGroupGroups
+	 * @param filterDefinitionRootGroupLogicalOperator
+	 * @param rawFilters
 	 * @returns PaginatedResponse<SupplierDto> OK
 	 * @throws ApiError
 	 */
@@ -45,6 +51,10 @@ export class SuppliersService {
 		filterValue?: string,
 		orderBy?: string,
 		isDescending?: boolean,
+		filterDefinitionRootGroupCriteria?: Array<FilterCriteria>,
+		filterDefinitionRootGroupGroups?: Array<FilterGroup>,
+		filterDefinitionRootGroupLogicalOperator?: string,
+		rawFilters?: Record<string, string>,
 	): CancelablePromise<PaginatedResponse<SupplierDto>> {
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -56,6 +66,10 @@ export class SuppliersService {
 				'FilterValue': filterValue,
 				'OrderBy': orderBy,
 				'IsDescending': isDescending,
+				'FilterDefinition.RootGroup.Criteria': filterDefinitionRootGroupCriteria,
+				'FilterDefinition.RootGroup.Groups': filterDefinitionRootGroupGroups,
+				'FilterDefinition.RootGroup.LogicalOperator': filterDefinitionRootGroupLogicalOperator,
+				'RawFilters': rawFilters,
 			},
 			errors: {
 				400: `Bad Request`,

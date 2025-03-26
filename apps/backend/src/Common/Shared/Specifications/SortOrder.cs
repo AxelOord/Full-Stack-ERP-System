@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Domain.Specifications;
+namespace Shared.Specifications;
 
 public class SortOrder<T>
 {

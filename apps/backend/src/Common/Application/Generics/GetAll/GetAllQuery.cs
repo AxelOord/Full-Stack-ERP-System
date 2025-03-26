@@ -1,7 +1,7 @@
 using Application.Messaging.Queries;
 using Domain.Primitives.Interfaces;
-using Domain.Specifications;
+using Shared.Specifications;
 
 namespace Application.Generics.GetAll;
 
-public sealed record GetAllQuery<T>(ISpecification<T> Specification) : IQuery<List<T>> where T : IEntity;
+public sealed record GetAllQuery<T>(GetAllEntitiesSpecification<T> Specification) : IQuery<List<T>> where T : IEntity;

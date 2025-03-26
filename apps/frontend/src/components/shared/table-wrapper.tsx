@@ -12,32 +12,77 @@ interface TableWrapperProps<T> {
     sortBy?: string,
     searchTerm?: string
   ) => Promise<PaginatedResponse<T>>;
+  pageSize?: number;
 }
 
 export default function TableWrapper<T extends object>({
   fetchData,
-  }: TableWrapperProps<T>) {
+  pageSize = 25,
+}: TableWrapperProps<T>) {
   const [data, setData] = useState<PaginatedResponse<T> | null>(null);
+  const [activeFilter, setActiveFilter] = useState<{ column: string; value: string } | null>(null);
+
+  // Handler for filter changes
+  const handleFilter = useCallback((column: string, value: string) => {
+    setActiveFilter({ column, value });
+    return fetchData(undefined, pageSize, column, value).then(setData);
+  }, [fetchData, pageSize]);
+
+  // Handler for search operations
+  const handleSearch = useCallback((searchTerm: string) => {
+    const field = data?.metadata?.columns?.at(1)?.field;
+    if (field) {
+      return handleFilter(field, searchTerm);
+    }
+    return Promise.resolve();
+  }, [data?.metadata?.columns, handleFilter]);
 
   const loadData = useCallback(
-    async (link?: Link) => { // TODO: make Link type that has rel href and method
-      const response = link ? await __request<PaginatedResponse<T>>(link) : await fetchData(undefined, 25);
-      setData(response);
+    async (link?: Link) => {
+
+      try {
+        const response = link 
+          ? await __request<PaginatedResponse<T>>(link)
+          : await fetchData(
+              undefined, 
+              pageSize, 
+              activeFilter?.column, 
+              activeFilter?.value
+            );
+        setData(response);
+      } catch (error) {
+        console.error("Failed to load data:", error);
+      }
     },
-    [fetchData]
+    [fetchData, activeFilter, pageSize]
   );
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const field = data?.metadata?.columns?.at(1)?.field; // TODO: define in api
+    const initialLoad = async () => {
+      // Add delay only on initial load
+      if (!data) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // i spend a lot of time on that loader, you're looking at it!
+      }
+      loadData();
+    };
+    
+    initialLoad();
+  }, [loadData, activeFilter]);
 
   return (
-    <DataTable<T>
-      data={data}
-      onSearch={field ? (term: string) => fetchData(undefined, 25, field, term).then(setData) : null}
-      onPaginate={(link?: Link) => loadData(link)}
-    />
+    <DataTable>
+      <DataTable.Content 
+        data={data} 
+        onFilter={handleFilter}
+      >
+        <DataTable.Loader />
+        <DataTable.Toolbar onSearch={handleSearch}/>
+        <DataTable.Container>
+          <DataTable.Header />
+          <DataTable.Body />
+        </DataTable.Container>
+      </DataTable.Content>
+      <DataTable.Pagination onPaginate={(link?: Link) => loadData(link)} />
+    </DataTable>
   );
 }

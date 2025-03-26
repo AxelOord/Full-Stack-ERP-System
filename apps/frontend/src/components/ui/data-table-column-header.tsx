@@ -1,6 +1,7 @@
 import { Column } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react"
 
+import { DataTableFilter } from "./data-table-filter";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,19 +16,28 @@ interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  field: string
+  onFilter?: (column: string, value: string) => void
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
+  field,
+  onFilter,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return (
+      <div className={cn("flex items-center space-x-2 basis-full justify-between", className)}>
+        <div className={cn(className)}>{title}</div>
+        {onFilter && <DataTableFilter column={column} field={field} onFilter={onFilter} />}
+      </div>
+    )
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center space-x-2 basis-full justify-between", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -61,6 +71,8 @@ export function DataTableColumnHeader<TData, TValue>({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {onFilter && <DataTableFilter column={column} field={field} onFilter={onFilter} />}
     </div>
   )
 }

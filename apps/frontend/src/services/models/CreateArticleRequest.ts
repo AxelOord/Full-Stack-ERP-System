@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CreateArticleDto = {
+export type CreateArticleRequest = {
 	articleNumber: string;
 	name: string;
-	isActive?: boolean;
-	supplierId?: string;
+	isActive: boolean;
+	supplierId: string;
 };
 

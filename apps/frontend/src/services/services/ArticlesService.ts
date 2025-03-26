@@ -3,7 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ArticleDto } from '../models/ArticleDto';
-import type { CreateArticleDto } from '../models/CreateArticleDto';
+import type { CreateArticleRequest } from '../models/CreateArticleRequest';
+import type { FilterCriteria } from '../models/FilterCriteria';
+import type { FilterGroup } from '../models/FilterGroup';
 import type { PaginatedResponse } from '../models/PaginatedResponse';
 import type { Response } from '../models/Response';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -16,7 +18,7 @@ export class ArticlesService {
 	 * @throws ApiError
 	 */
 	public static postApiArticles(
-		requestBody?: CreateArticleDto,
+		requestBody: CreateArticleRequest,
 	): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
@@ -35,6 +37,10 @@ export class ArticlesService {
 	 * @param filterValue
 	 * @param orderBy
 	 * @param isDescending
+	 * @param filterDefinitionRootGroupCriteria
+	 * @param filterDefinitionRootGroupGroups
+	 * @param filterDefinitionRootGroupLogicalOperator
+	 * @param rawFilters
 	 * @returns PaginatedResponse<ArticleDto> OK
 	 * @throws ApiError
 	 */
@@ -45,6 +51,10 @@ export class ArticlesService {
 		filterValue?: string,
 		orderBy?: string,
 		isDescending?: boolean,
+		filterDefinitionRootGroupCriteria?: Array<FilterCriteria>,
+		filterDefinitionRootGroupGroups?: Array<FilterGroup>,
+		filterDefinitionRootGroupLogicalOperator?: string,
+		rawFilters?: Record<string, string>,
 	): CancelablePromise<PaginatedResponse<ArticleDto>> {
 		return __request(OpenAPI, {
 			method: 'GET',
@@ -56,6 +66,10 @@ export class ArticlesService {
 				'FilterValue': filterValue,
 				'OrderBy': orderBy,
 				'IsDescending': isDescending,
+				'FilterDefinition.RootGroup.Criteria': filterDefinitionRootGroupCriteria,
+				'FilterDefinition.RootGroup.Groups': filterDefinitionRootGroupGroups,
+				'FilterDefinition.RootGroup.LogicalOperator': filterDefinitionRootGroupLogicalOperator,
+				'RawFilters': rawFilters,
 			},
 			errors: {
 				400: `Bad Request`,

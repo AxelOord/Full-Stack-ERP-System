@@ -9,7 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import InputSearch from "@/components/ui/input-search";
+import InputSearch from "@/components/table/input-search";
 import { Table } from '@tanstack/react-table';
 import { X } from "lucide-react";
 import { useRouter, useSearchParams } from 'next/navigation';

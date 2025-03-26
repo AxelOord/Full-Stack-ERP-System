@@ -19,14 +19,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "./table"
 import React, { Suspense, useMemo } from "react"
-import { createColumns } from "./columns"
+import { createColumns } from "@/components/table/columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
-import { Skeleton } from "./skeleton"
-import Loader from "../shared/loader"
-import TableToolbar from "./table-toolbar"
-import Pagination from "./pagination"
+import { Skeleton } from "@/components/ui/skeleton"
+import Loader from "@/components/shared/loader"
+import TableToolbar from "@/components/table/table-toolbar"
+import Pagination from "@/components/table/pagination"
 import { useDataTableFilters } from "@/hooks/useDataTableFilters";
 import { BaseDto } from "@/services/models/BaseDto"
 

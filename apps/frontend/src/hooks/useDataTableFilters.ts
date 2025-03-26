@@ -1,6 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
-import { FilterOperator, FILTER_OPERATORS } from "@/components/ui/data-table-column-header";
+import { FilterOperator, FILTER_OPERATORS } from "@/components/table/data-table-column-header";
 
 export function useDataTableFilters(onFiltersChange?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void) {
   const router = useRouter();

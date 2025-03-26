@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ApiData } from "@/services/models/ApiData";
 import { Column } from "@/services/models/Column";
-import { DataTableColumnHeader, FilterOperator } from "./data-table-column-header";
+import { DataTableColumnHeader, FilterOperator } from "@/components/table/data-table-column-header";
 
 export const createColumns = <T extends object>(
   fields: Column[],

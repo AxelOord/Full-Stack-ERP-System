@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useEffect, useState, createContext, useContext } from "react"
 
-// Define filter operators that can be used
+// these definitions should be received from the backend
 export const FILTER_OPERATORS = {
   CONTAINS: "contains",
   EQUALS: "eq",

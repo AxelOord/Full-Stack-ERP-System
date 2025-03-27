@@ -15,6 +15,7 @@ import { X } from "lucide-react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from "@/lib/utils";
 import { BaseDto } from '@/services/models/BaseDto';
+import { useDataTableFilters } from "@/hooks/use-data-table-filters";
 
 // Constants
 const EXCLUDED_PARAMS = ['page', 'size', 'q'];
@@ -82,67 +83,40 @@ function useTableToolbarContext<TDto extends BaseDto>(): TableToolbarContextValu
   return context as TableToolbarContextValue<TDto>;
 }
 
-// Root Component
 export function TableToolbar<TDto extends BaseDto>({
   table,
   className,
   children,
-  commands: explicitCommands,
-  onRemoveCommand: explicitRemoveHandler,
-  onClearCommands: explicitClearHandler,
+  commands: explicitCommands = [],
+  onRemoveCommand,
+  onClearCommands,
   onOperatorChange,
   onValueChange,
   ...props
 }: React.PropsWithChildren<TableToolbarProps<TDto>>) {
-  // TODO: Should be using useDataTableFilters instead of useSearchParams
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const parsedCommands: Command[] = useMemo(
+    () => explicitCommands.map(parseCommand),
+    [explicitCommands]
+  );
 
-  // Parse commands from URL if not explicitly provided
-  const defaultCommands = useMemo(() => {
-    if (explicitCommands) return explicitCommands;
-    
-    const params = new URLSearchParams(searchParams.toString());
-    const commandList: Command[] = [];
-     
-    params.forEach((value, key) => {
-      if (!EXCLUDED_PARAMS.includes(key)) {
-        commandList.push(parseCommand(`${key}${COMMAND_SEPARATOR}${value}`));
-      }
-    });
-     
-    return commandList;
-  }, [searchParams, explicitCommands]);
-
-  // Default handlers for removing and clearing commands if not provided
-  const defaultRemoveCommand = useCallback((command: string) => {
-    const { key } = parseCommand(command);
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete(key);
-    router.push(`?${params.toString()}`);
-  }, [router, searchParams]);
-   
-  const defaultClearCommands = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    defaultCommands.forEach(command => {
-      params.delete(command.key);
-    });
-    router.push(`?${params.toString()}`);
-  }, [defaultCommands, router, searchParams]);
-
-  // Context value - use provided handlers or defaults
   const contextValue = {
     table,
-    commands: defaultCommands,
-    onRemoveCommand: explicitRemoveHandler || defaultRemoveCommand,
-    onClearCommands: explicitClearHandler || defaultClearCommands,
+    commands: parsedCommands,
+    onRemoveCommand: onRemoveCommand ?? (() => {}),
+    onClearCommands: onClearCommands ?? (() => {}),
     onOperatorChange,
     onValueChange
   };
 
   return (
     <TableToolbarContext.Provider value={contextValue}>
-      <div className={cn("flex flex-col sm:flex-row items-start sm:items-center py-4 gap-2", className)} {...props}>
+      <div
+        className={cn(
+          "flex flex-col sm:flex-row items-start sm:items-center py-4 gap-2",
+          className
+        )}
+        {...props}
+      >
         {children}
       </div>
     </TableToolbarContext.Provider>
@@ -150,8 +124,8 @@ export function TableToolbar<TDto extends BaseDto>({
 }
 
 // Search Component
-TableToolbar.Search = function Search({ 
-  onInputChange 
+TableToolbar.Search = function Search({
+  onInputChange
 }: SearchProps) {
   return <InputSearch onInputChange={onInputChange} />;
 };
@@ -164,24 +138,26 @@ TableToolbar.Commands = function Commands({
   clearButtonText = "GLOBAL_CLEAR"
 }: CommandsProps) {
   const { commands: contextCommands, onRemoveCommand: contextRemoveHandler, onClearCommands: contextClearHandler } = useTableToolbarContext();
-  
+
   // Use explicit handlers if provided, otherwise use context handlers
   const commands = explicitCommands ? explicitCommands.map(parseCommand) : contextCommands;
   const handleRemoveCommand = explicitRemoveHandler || contextRemoveHandler;
   const handleClearCommands = explicitClearHandler || contextClearHandler;
-  
+
   if (commands.length === 0) return null;
-  
+
+  console.log('rendering commands', commands);
+
   return (
     <div className="flex gap-2 flex-wrap">
       {commands.map((command) => (
-        <TableToolbar.CommandTag 
-          key={command.raw} 
-          command={command} 
-          onRemove={handleRemoveCommand} 
+        <TableToolbar.CommandTag
+          key={command.raw}
+          command={command}
+          onRemove={handleRemoveCommand}
         />
       ))}
-      
+
       <Button
         variant="outline"
         size="sm"
@@ -200,20 +176,20 @@ interface CommandTagProps {
   onRemove: (cmd: string) => void;
 }
 
-TableToolbar.CommandTag = function CommandTag({ 
-  command, 
-  onRemove 
+TableToolbar.CommandTag = function CommandTag({
+  command,
+  onRemove
 }: CommandTagProps) {
   const { onOperatorChange, onValueChange } = useTableToolbarContext();
-  
+
   // Extract operator from command if it exists (e.g., supplierName[contains]:012)
   const [key, value] = command.raw.split(':');
   const keyParts = key.match(/^(.*?)\[(.*?)\]$/);
-  
+
   const fieldName = keyParts ? keyParts[1] : command.key;
   const operator = keyParts ? keyParts[2] : "contains";
   const displayValue = value || command.value;
-  
+
   const [inputValue, setInputValue] = React.useState(displayValue);
   const [isEditing, setIsEditing] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -224,15 +200,15 @@ TableToolbar.CommandTag = function CommandTag({
       onOperatorChange(fieldName, operator, newOperator, displayValue);
     }
   };
-  
+
   // Handle value changes by delegating to the context handler
   const handleValueChange = (newValue: string) => {
     if (newValue.trim() === '') return;
-    
+
     if (onValueChange) {
       onValueChange(fieldName, operator, newValue);
     }
-    
+
     setIsEditing(false);
   };
 
@@ -242,7 +218,7 @@ TableToolbar.CommandTag = function CommandTag({
       inputRef.current.focus();
     }
   }, [isEditing]);
-  
+
   return (
     <div className="flex gap-[1px] items-center text-xs">
       <div className="flex gap-1.5 shrink-0 rounded-l bg-muted px-1.5 py-1 items-center">
@@ -286,7 +262,7 @@ TableToolbar.CommandTag = function CommandTag({
           size={inputValue.length}
         />
       ) : (
-        <div 
+        <div
           className="flex gap-1.5 shrink-0 bg-muted px-1.5 py-1 items-center cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
@@ -310,7 +286,7 @@ TableToolbar.Visibility = function Visibility({
   buttonText = "GLOBAL_VIEW"
 }: VisibilityProps) {
   const { table } = useTableToolbarContext();
-  
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

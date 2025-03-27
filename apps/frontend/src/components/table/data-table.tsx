@@ -20,14 +20,14 @@ import {
   TableHeader,
   TableRow,
 } from "./table"
-import React, { Suspense, useMemo } from "react"
+import React, { Suspense, useMemo, useState, useEffect } from "react"
 import { createColumns } from "@/components/table/columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton"
 import Loader from "@/components/shared/loader"
 import TableToolbar from "@/components/table/table-toolbar"
 import Pagination from "@/components/table/pagination"
-import { useDataTableFilters } from "@/hooks/useDataTableFilters";
+import { useDataTableFilters } from "@/hooks/use-data-table-filters";
 import { BaseDto } from "@/services/models/BaseDto"
 
 interface DataTableContextValue<TDto extends BaseDto> {
@@ -223,43 +223,54 @@ DataTable.Toolbar = function DataTableToolbar<TDto extends BaseDto>({
 }: DataTableToolbarProps = {}) {
   const { table, onSearch: contextOnSearch, isLoading, filters } = useDataTable<TDto>();
 
-  const searchHandler = onSearch !== undefined ? onSearch : contextOnSearch;
+  const searchHandler = onSearch ?? contextOnSearch;
 
   const skeletonTable = {
-    getAllColumns: () => Array(4).fill(0).map((_, i) => ({
-      id: `skeleton-column-${i}`,
-      getCanHide: () => true,
-      getToggleVisibilityHandler: () => () => { },
-      toggleVisibility: () => { },
-      getIsVisible: () => true
-    })),
+    getAllColumns: () =>
+      Array(4)
+        .fill(0)
+        .map((_, i) => ({
+          id: `skeleton-column-${i}`,
+          getCanHide: () => true,
+          getToggleVisibilityHandler: () => () => {},
+          toggleVisibility: () => {},
+          getIsVisible: () => true,
+        })),
     getColumn: () => null,
   };
 
-  // should be done with supsense only
-  const tableInstance = (isLoading || !table || typeof table.getHeaderGroups !== 'function')
-  ? (skeletonTable as unknown) as NonNullable<typeof table>
-  : table;
+  const tableInstance =
+    isLoading || !table || typeof table.getHeaderGroups !== 'function'
+      ? (skeletonTable as unknown as NonNullable<typeof table>)
+      : table;
+
+  const commandList = filters.commands ?? [];
 
   return (
-    <Suspense fallback={
+    <Suspense
+      fallback={
+        <TableToolbar
+          table={skeletonTable as unknown as NonNullable<typeof table>}
+          commands={[]}
+          onRemoveCommand={() => {}}
+          onClearCommands={() => {}}
+          onOperatorChange={() => {}}
+          onValueChange={() => {}}
+        />
+      }
+    >
       <TableToolbar
-            table={(skeletonTable as unknown) as NonNullable<typeof table>}
-            onRemoveCommand={filters.removeCommand}
-            onClearCommands={filters.clearAllFilters}
-            onOperatorChange={filters.changeOperator}
-            onValueChange={filters.updateFilterValue}
-          ></TableToolbar>
-    }>
-      <TableToolbar
-            table={tableInstance}
-            onRemoveCommand={filters.removeCommand}
-            onClearCommands={filters.clearAllFilters}
-            onOperatorChange={filters.changeOperator}
-            onValueChange={filters.updateFilterValue}
-          >
+        table={tableInstance}
+        commands={commandList}
+        onRemoveCommand={filters.removeCommand}
+        onClearCommands={filters.clearAllFilters}
+        onOperatorChange={filters.changeOperator}
+        onValueChange={filters.updateFilterValue}
+      >
         <TableToolbar.Left>
-          <TableToolbar.Search onInputChange={searchHandler === null ? undefined : searchHandler} />
+          <TableToolbar.Search
+            onInputChange={searchHandler === null ? undefined : searchHandler}
+          />
           <TableToolbar.Commands />
         </TableToolbar.Left>
         <TableToolbar.Right>

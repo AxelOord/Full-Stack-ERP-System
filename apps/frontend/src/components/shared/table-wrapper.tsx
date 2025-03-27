@@ -4,7 +4,7 @@ import { DataTable } from "@/components/table/data-table";
 import { Link, PaginatedResponse } from "@/services";
 import { useState, useCallback, useEffect } from "react";
 import { requestFromUrl as __request } from "@/services/core/request";
-import { useDataTableFilters } from "@/hooks/useDataTableFilters";
+import { useDataTableFilters } from "@/hooks/use-data-table-filters";
 
 interface TableWrapperProps<T> {
   fetchData: (

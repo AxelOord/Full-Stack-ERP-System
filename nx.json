@@ -32,18 +32,22 @@
     {
       "plugin": "@nx-tools/nx-container",
       "options": {}
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook"
+      }
     }
   ],
   "targetDefaults": {
     "@nx/js:tsc": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     },
     "@nx/eslint:lint": {
       "cache": true,
@@ -55,11 +59,7 @@
       ]
     },
     "build": {
-      "dependsOn": [
-        "^build",
-        "codegen",
-        "^codegen"
-      ]
+      "dependsOn": ["^build", "codegen", "^codegen"]
     },
     "codegen": {
       "cache": true

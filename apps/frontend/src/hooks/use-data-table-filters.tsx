@@ -1,5 +1,5 @@
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FILTER_OPERATORS, FilterOperator } from '@/components/table/data-table-column-header';
 
 type FilterValue = { operator: string; value: string };

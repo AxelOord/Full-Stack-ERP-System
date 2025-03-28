@@ -47,13 +47,8 @@ export class SuppliersService {
 	public static getApiSuppliers(
 		pageNumber?: number,
 		pageSize?: number,
-		filterProperty?: string,
-		filterValue?: string,
 		orderBy?: string,
 		isDescending?: boolean,
-		filterDefinitionRootGroupCriteria?: Array<FilterCriteria>,
-		filterDefinitionRootGroupGroups?: Array<FilterGroup>,
-		filterDefinitionRootGroupLogicalOperator?: string,
 		rawFilters?: Record<string, string>,
 	): CancelablePromise<PaginatedResponse<SupplierDto>> {
 		return __request(OpenAPI, {
@@ -62,13 +57,8 @@ export class SuppliersService {
 			query: {
 				'PageNumber': pageNumber,
 				'PageSize': pageSize,
-				'FilterProperty': filterProperty,
-				'FilterValue': filterValue,
 				'OrderBy': orderBy,
 				'IsDescending': isDescending,
-				'FilterDefinition.RootGroup.Criteria': filterDefinitionRootGroupCriteria,
-				'FilterDefinition.RootGroup.Groups': filterDefinitionRootGroupGroups,
-				'FilterDefinition.RootGroup.LogicalOperator': filterDefinitionRootGroupLogicalOperator,
 				'RawFilters': rawFilters,
 			},
 			errors: {

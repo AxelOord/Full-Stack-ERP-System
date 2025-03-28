@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "./table"
-import React, { Suspense, useMemo, useState, useEffect } from "react"
+import React, { Suspense, useMemo } from "react"
 import { createColumns } from "@/components/table/columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton"

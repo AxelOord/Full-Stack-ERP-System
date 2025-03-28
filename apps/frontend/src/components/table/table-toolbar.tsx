@@ -12,10 +12,8 @@ import {
 import InputSearch from "@/components/table/input-search";
 import { Table } from '@tanstack/react-table';
 import { X } from "lucide-react";
-import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from "@/lib/utils";
 import { BaseDto } from '@/services/models/BaseDto';
-import { useDataTableFilters } from "@/hooks/use-data-table-filters";
 
 // Constants
 const EXCLUDED_PARAMS = ['page', 'size', 'q'];
@@ -45,7 +43,7 @@ export interface VisibilityProps {
 
 export interface TableToolbarProps<TDto extends BaseDto> extends React.HTMLAttributes<HTMLDivElement> {
   table: Table<TDto>;
-  commands?: Command[];
+  commands?: string[];
   onRemoveCommand?: (command: string) => void;
   onClearCommands?: () => void;
   onOperatorChange?: (field: string, oldOperator: string, newOperator: string, value: string) => void;

@@ -11,7 +11,15 @@ export default {
 		extend: {
 			colors: {
 				turquoise: '#4BC8B6',
-				orange: '#F4812B',
+				orange: {
+					DEFAULT: '#FDB178',
+					100: '#FFEFE4',
+					150: '#FDE7D7',
+					200: '#FEE0C9',
+					300: '#FED0AE',
+					400: '#FDC193',
+					500: '#FDB178',
+				},
 				blue: '#002146',
 				gray: {
 					100: '#EBF1F5',
@@ -93,7 +101,7 @@ export default {
 				// 👇 Add CSS variables
 				sans: ["var(--font-maven-pro)"],
 				mono: ["var(--font-maven-pro)"],
-			  },
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

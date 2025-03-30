@@ -98,7 +98,6 @@ export default function TableWrapper<T extends object>({
 
   useEffect(() => {
     const initialLoad = async () => {
-      // Add delay only on initial load
       if (!data) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // i spend a lot of time on that loader, you're looking at it!
       }
@@ -114,6 +113,7 @@ export default function TableWrapper<T extends object>({
         <DataTable.Content 
           data={data} 
           onFilter={handleFilter}
+          skeletonRowCount={pageSize}
         >
           <DataTable.Toolbar onSearch={handleSearch}/>
           <DataTable.Container>

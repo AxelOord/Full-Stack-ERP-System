@@ -2,8 +2,128 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Maven Pro';
+  src: url('./fonts/MavenPro.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Black Az.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Black Italic Az.woff') format('woff');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Bold Az.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Bold Italic Az.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro ExtraLight Az.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro ExtraLight Italic Az.woff') format('woff');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Light Az.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Light Italic Az.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Medium Az.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Medium Italic Az.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Regular Az.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Regular Italic Az.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Semi Bold Az.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro Semi Bold Italic Az.woff') format('woff');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro UltraLight Az.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sofia Pro';
+  src: url('./fonts/Sofia Pro/Sofia Pro UltraLight Italic Az.woff') format('woff');
+  font-weight: 100;
+  font-style: italic;
+}
+
+
 body {
-  font-family: var(--font-maven-pro), Helvetica, sans-serif;
+  font-family: 'Sofia Pro', Helvetica, sans-serif;
 }
 
 @layer base {

@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import TableWrapper from '@/components/shared/table-wrapper';
+import { userEvent, within, expect, waitFor, screen } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   ArticleDto,
@@ -33,7 +34,7 @@ const entityConfig = {
   supplier: {
     label: "Supplier",
     fetchData: (...args: Parameters<typeof SuppliersService.getApiSuppliers>) =>
-        cancelableToPromise(SuppliersService.getApiSuppliers(...args)),
+      cancelableToPromise(SuppliersService.getApiSuppliers(...args)),
     component: () => (
       <TableWrapper<SupplierDto>
         fetchData={(...args) =>
@@ -46,18 +47,21 @@ const entityConfig = {
 
 
 const meta: Meta = {
-    parameters: {
-      controls: {
-        expanded: true,
-      },
+  parameters: {
+    controls: {
+      expanded: true,
     },
-    argTypes: {
-      entity: {
-        control: { type: "select" },
-        options: ["article", "supplier"],
-      },
+  },
+  argTypes: {
+    entity: {
+      control: { type: "select" },
+      options: Object.values(entityConfig).map((c) => c.label),
+      mapping: Object.fromEntries(
+        Object.entries(entityConfig).map(([key, config]) => [config.label, key])
+      ),
     },
-  };
+  }
+};
 
 export default meta;
 
@@ -66,11 +70,12 @@ type Story = StoryObj<{
 }>;
 
 export const Default: Story = {
-    args: {
-      entity: "article",
-    },
-    render: ({ entity }) => {
-      const SelectedComponent = entityConfig[entity].component;
-      return <Suspense>{<SelectedComponent />}</Suspense>;
-    },
-  };
+  tags: ['default'],
+  args: {
+    entity: Object.values(entityConfig)[0].label,
+  },
+  render: ({ entity }) => {
+    const SelectedComponent = entityConfig[entity].component;
+    return <Suspense>{<SelectedComponent />}</Suspense>;
+  },
+};

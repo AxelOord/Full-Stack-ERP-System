@@ -1,24 +1,19 @@
 import { dirname, join } from "path";
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from "@storybook/experimental-nextjs-vite";
 
 const config: StorybookConfig = {
   stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
-  addons: [getAbsolutePath("@storybook/addon-essentials"), getAbsolutePath("@storybook/addon-interactions")],
+  addons: [
+    getAbsolutePath("@storybook/addon-essentials"),
+    getAbsolutePath("@storybook/experimental-addon-test")
+  ],
   framework: {
-    name: getAbsolutePath("@storybook/nextjs"),
+    name: getAbsolutePath("@storybook/experimental-nextjs-vite"),
     options: {},
   },
   previewAnnotations: [
     './.storybook/preview.tsx',
-  ],
-
-  webpackFinal: async (config, { configType }) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      "next/router": "next-router-mock",
-    };
-    return config;
-  },
+  ]
 };
 
 export default config;

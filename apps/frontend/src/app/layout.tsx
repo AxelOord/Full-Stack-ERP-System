@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 
 import { RefreshProvider } from "@/context/refresh-context";
@@ -19,17 +18,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-const mavenProFont = localFont({
-  src: "./fonts/MavenPro.ttf",
-  variable: "--font-maven-pro",
-  weight: "100 900",
-});
-const sofiaProFont = localFont({
-  src: "./fonts/Sofia Pro/Sofia Pro Regular Az.woff",
-  variable: "--font-sofia-pro",
-  weight: "100 900",
-});
-
 export const metadata: Metadata = {
   title: "Jeeo v2.0",
   description: "The next generation of Jeeo",
@@ -43,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${mavenProFont.variable} ${sofiaProFont.variable} antialiased`}
+        className={`antialiased`}
       >
         <SidebarProvider>
           <RefreshProvider>

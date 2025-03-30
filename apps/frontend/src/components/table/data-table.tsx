@@ -10,8 +10,12 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
+  getExpandedRowModel
 } from "@tanstack/react-table"
-
+import {
+  ChevronRight,
+  ChevronDown
+} from "lucide-react"
 import {
   Table,
   TableBody,
@@ -24,6 +28,7 @@ import React, { Suspense, useMemo } from "react"
 import { createColumns } from "@/components/table/columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/Button"
 import Loader from "@/components/shared/loader"
 import TableToolbar from "@/components/table/table-toolbar"
 import Pagination from "@/components/table/pagination"
@@ -40,6 +45,7 @@ interface DataTableContextValue<TDto extends BaseDto> {
   onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
   updateContext: (newState: Partial<DataTableContextState<TDto>>) => void;
   filters: ReturnType<typeof useDataTableFilters>;
+  skeletonRowCount?: number;
 }
 
 interface DataTableContextState<TDto extends BaseDto> {
@@ -50,6 +56,7 @@ interface DataTableContextState<TDto extends BaseDto> {
   onSearch: ((searchTerm: string) => void) | null;
   onPaginate: (link?: Link) => void;
   onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
+  skeletonRowCount?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,14 +132,17 @@ interface DataTableContentProps<T extends object> {
   children?: React.ReactNode;
   data: PaginatedResponse<T> | null;
   onFilter?: (activeFilters: Record<string, { operator: string; value: string }[]>) => void;
+  skeletonRowCount?: number;
 }
 
 DataTable.Content = function DataTableContent<T extends object>({
   children,
   data,
   onFilter,
+  skeletonRowCount = 25,
 }: DataTableContentProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [expanded, setExpanded] = React.useState({});
   const { updateContext, isLoading: contextIsLoading, filters } = useDataTable<T>();
 
   React.useEffect(() => {
@@ -157,7 +167,7 @@ DataTable.Content = function DataTableContent<T extends object>({
     () => (isLoading ? Array(50).fill({}) : data?.data || []),
     [isLoading, data]
   );
-
+  
   const loadingColumns: ColumnDef<ApiData<T>>[] = React.useMemo(() =>
     Array(4).fill(null).map((_, index) => ({
       id: `loading-${index}`,
@@ -166,44 +176,63 @@ DataTable.Content = function DataTableContent<T extends object>({
     })), []
   );
 
-  const columnsMemo = useMemo(
-    () => (
-      isLoading
-        ? loadingColumns
-        : createColumns<T>(
-          data?.metadata?.columns || [],
-          filters.applyFilter,
-          filters.getFilterValue
-        )
-    ),
-    [isLoading, data?.metadata?.columns, loadingColumns, filters]
+  const [columns, setColumns] = React.useState<ColumnDef<ApiData<T>>[]>(
+    isLoading ? loadingColumns : [] // fallback
   );
-
+  
   const table = useReactTable({
     data: tableData,
-    columns: columnsMemo,
+    columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onSortingChange: setSorting,
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: (row) => {
+      const attributes = row.original?.attributes;
+      if (!attributes) return false;
+  
+      return Object.values(attributes).some(value =>
+        (Array.isArray(value) && value.length > 0) ||
+        (typeof value === 'object' && value !== null && Object.keys(value).length > 0)
+      );
+    },
     state: {
       columnFilters,
       columnVisibility,
       sorting,
+      expanded,
     },
+    onExpandedChange: setExpanded,
   });
+  
+  React.useEffect(() => {
+    if (isLoading || !data?.metadata?.columns) return;
+  
+    const hasExpandableRows = table.getRowModel().rows.some(row => row.getCanExpand());
+  
+    const newColumns = createColumns<T>(
+      data.metadata.columns,
+      filters.applyFilter,
+      filters.getFilterValue,
+      hasExpandableRows
+    );
 
+    setColumns(newColumns);
+  }, [isLoading, data?.metadata?.columns, filters, table]);
+  
   React.useEffect(() => {
     updateContext({
       data,
       isLoading: !data || !data?.metadata,
-      columns: columnsMemo,
+      columns,
       table,
-      onFilter
+      onFilter,
+      skeletonRowCount
     });
-  }, [data, columnsMemo, table, updateContext, onFilter]);
+  }, [data, columns, table, updateContext, onFilter, skeletonRowCount, expanded]);
 
   return (
     <div className="flex-grow overflow-auto">
@@ -232,8 +261,8 @@ DataTable.Toolbar = function DataTableToolbar<TDto extends BaseDto>({
         .map((_, i) => ({
           id: `skeleton-column-${i}`,
           getCanHide: () => true,
-          getToggleVisibilityHandler: () => () => {},
-          toggleVisibility: () => {},
+          getToggleVisibilityHandler: () => () => { },
+          toggleVisibility: () => { },
           getIsVisible: () => true,
         })),
     getColumn: () => null,
@@ -252,10 +281,10 @@ DataTable.Toolbar = function DataTableToolbar<TDto extends BaseDto>({
         <TableToolbar
           table={skeletonTable as unknown as NonNullable<typeof table>}
           commands={[]}
-          onRemoveCommand={() => {}}
-          onClearCommands={() => {}}
-          onOperatorChange={() => {}}
-          onValueChange={() => {}}
+          onRemoveCommand={() => { }}
+          onClearCommands={() => { }}
+          onOperatorChange={() => { }}
+          onValueChange={() => { }}
         />
       }
     >
@@ -314,7 +343,10 @@ DataTable.Header = function DataTableHeader() {
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow className="flex" key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <TableHead className="flex-1 flex items-center" key={header.id}>
+            <TableHead
+              key={header.id}
+              className={`${header.column.id === 'expand' ? 'w-10 flex-none' : 'flex-1'}`}
+            >
               {header.isPlaceholder
                 ? null
                 : flexRender(
@@ -330,12 +362,12 @@ DataTable.Header = function DataTableHeader() {
 };
 
 DataTable.Body = function DataTableBody() {
-  const { table, columns, isLoading } = useDataTable();
+  const { table, columns, isLoading, skeletonRowCount } = useDataTable();
 
   if (isLoading || !table || typeof table.getRowModel !== 'function') {
     return (
       <TableBody className="overflow-y-auto mx-auto w-full">
-        {Array(50).fill(0).map((_, rowIndex) => (
+        {Array(skeletonRowCount).fill(0).map((_, rowIndex) => (
           <TableRow className="flex" key={`skeleton-row-${rowIndex}`}>
             {Array(4).fill(0).map((_, cellIndex) => (
               <TableCell className="flex-1" key={`skeleton-cell-${rowIndex}-${cellIndex}`}>
@@ -352,17 +384,14 @@ DataTable.Body = function DataTableBody() {
     <TableBody className="overflow-y-auto mx-auto w-full">
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
-          <TableRow
-            className="flex"
-            key={row.id}
-            data-state={row.getIsSelected() && "selected"}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell className="flex-1" key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
+          <React.Fragment key={row.id}>
+            <DataTable.Row className="flex" row={row} />
+
+            {/* TODO: this should accept children, so that the caller can choose what expand component to use */}
+            {row.getIsExpanded() && (
+              <DataTable.ExpandedContent row={row} />
+            )}
+          </React.Fragment>
         ))
       ) : (
         <TableRow className="flex">
@@ -388,14 +417,13 @@ DataTable.Pagination = function DataTablePagination({
 }: DataTablePaginationProps = {}) {
   const { data, onPaginate: contextOnPaginate, isLoading } = useDataTable();
 
-  // Use prop if provided, otherwise fall back to context
   const paginateHandler = onPaginate || contextOnPaginate;
 
+  // needs to be refined
   if (isLoading || !data || !data.links) {
     return (
       <div className="sticky bottom-0 w-full bg-background border-t">
         <div className="flex items-center justify-between p-4">
-          <Skeleton className="h-8 w-20" />
           <div className="flex space-x-2">
             <Skeleton className="h-8 w-8 rounded" />
             <Skeleton className="h-8 w-8 rounded" />
@@ -418,42 +446,75 @@ DataTable.Pagination = function DataTablePagination({
   );
 };
 
-// interface DataTableRowProps {
-//   row: any;
-//   children?: React.ReactNode;
-// }
+interface DataTableRowProps {
+  row: any;
+  children?: React.ReactNode;
+}
 
-// DataTable.Row = function DataTableRow({
-//   row,
-//   children,
-// }: DataTableRowProps) {
-//   return (
-//     <TableRow
-//       className="flex"
-//       key={row.id}
-//       data-state={row.getIsSelected() && "selected"}
-//     >
-//       {children ?? row.getVisibleCells().map((cell: any) => (
-//         <DataTable.Cell key={cell.id} cell={cell} />
-//       ))}
-//     </TableRow>
-//   );
-// };
+DataTable.Row = function DataTableRow({
+  row,
+  children,
+  ...props
+}: DataTableRowProps) {
+  return (
+    <TableRow
+      className="flex"
+      key={row.id}
+      data-state={row.getIsSelected() && "selected"}
+      {...props}
+    >
+      {children ?? row.getVisibleCells().map((cell: any) => (
+        <TableCell
+          key={cell.id}
+          className={`${cell.column.id === 'expand' ? 'w-14 flex-none' : 'flex-1'}`}
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+};
 
-// interface DataTableCellProps {
-//   cell: any; // FIXME: no any's!
-//   children?: React.ReactNode;
-// }
+interface DataTableCellProps {
+  cell: any; // FIXME: no any's!
+  children?: React.ReactNode;
+}
 
-// DataTable.Cell = function DataTableCell({
-//   cell,
-//   children,
-// }: DataTableCellProps) {
-//   return (
-//     <TableCell className="flex-1" key={cell.id}>
-//       {children ?? flexRender(cell.column.columnDef.cell, cell.getContext())}
-//     </TableCell>
-//   );
-// };
+DataTable.Cell = function DataTableCell({
+  cell,
+  children,
+}: DataTableCellProps) {
+  return (
+    <TableCell className="flex-1" key={cell.id}>
+      {children ?? flexRender(cell.column.columnDef.cell, cell.getContext())}
+    </TableCell>
+  );
+};
+
+// add expandable row to metadata from the backend
+DataTable.ExpandedContent = function ExpandedContent({
+  row,
+  children
+}) {
+  const originalData = row.original;
+
+  return (
+    <div className="p-4">
+      <pre className="text-sm">
+        {JSON.stringify(
+          Object.fromEntries(
+            Object.entries(originalData?.attributes || {}).filter(
+              ([key, value]) => 
+                Array.isArray(value) || 
+                (value && typeof value === 'object' && !Array.isArray(value))
+            )
+          ),
+          null, 
+          2
+        )}
+      </pre>
+    </div>
+  );
+};
 
 export { DataTable, useDataTable };

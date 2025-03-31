@@ -15,6 +15,9 @@ public sealed class Article : Entity
     [ForeignKey("SupplierId")]
     public Supplier Supplier { get; private set; }
 
+    private readonly List<ArticleVariant> _variants = new();
+    public IReadOnlyCollection<ArticleVariant> Variants => _variants.AsReadOnly();
+
     private Article() { }
 
     private Article(Guid id, string articleNumber, string name, bool isActive, Supplier supplier)

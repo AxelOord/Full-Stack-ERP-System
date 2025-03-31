@@ -20,7 +20,7 @@ public class SingleEntityMapper<TSource, TDestination> : IResultMapper<TSource, 
 {
     public Response<TDestination> Map(Result<TSource> result, IMapper mapper, HttpRequest request)
     {
-        var apiData = ApiData<TDestination>.CreateApiData<TSource, TDestination>(result.Value, mapper, request);
+        var apiData = ApiData<TDestination>.CreateApiData<TSource>(result.Value, mapper, request);
         var response = new Response<TDestination>
         {
             Data = [apiData],
@@ -37,7 +37,7 @@ public class CollectionEntityMapper<TSource, TDestination> : IResultMapper<List<
 {
     public PaginatedResponse<TDestination> Map(Result<List<TSource>> result, IMapper mapper, HttpRequest request)
     {
-        var apiData = result.Value.Select(entity => ApiData<TDestination>.CreateApiData<TSource, TDestination>(entity, mapper, request)).ToList();
+        var apiData = result.Value.Select(entity => ApiData<TDestination>.CreateApiData<TSource>(entity, mapper, request)).ToList();
 
         var response = new PaginatedResponse<TDestination>
         {

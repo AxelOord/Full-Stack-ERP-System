@@ -41,8 +41,8 @@ const data: PaginatedResponse<TestDto> = {
         },
     ],
     metadata: {
-        columns: testColumns,
-    },
+        columns: testColumns
+    }
 }
 
 const meta: Meta = {
@@ -87,13 +87,53 @@ export const ExpandableRows: StoryObj = {
                         name: "John Doe",
                         email: "john@example.com",
                         age: 30,
-                        // Add nested data to make this row expandable
+                        // Add nested data to show in expanded row
                         details: [
                             {
                                 type: "test",
                                 id: "1",
                                 attributes: {
                                     address: "123 Main St",
+                                    phone: "555-1234",
+                                    preferences: ["coding", "reading"]
+                                },
+                                links: { self: "#" },
+                            },
+                            {
+                                type: "test",
+                                id: "2",
+                                attributes: {
+                                    address: "127 Main St",
+                                    phone: "555-1234",
+                                    preferences: ["coding", "reading"]
+                                },
+                                links: { self: "#" },
+                            },
+                            {
+                                type: "test",
+                                id: "3",
+                                attributes: {
+                                    address: "126 Main St",
+                                    phone: "555-1234",
+                                    preferences: ["coding", "reading"]
+                                },
+                                links: { self: "#" },
+                            },
+                            {
+                                type: "test",
+                                id: "4",
+                                attributes: {
+                                    address: "125 Main St",
+                                    phone: "555-1234",
+                                    preferences: ["coding", "reading"]
+                                },
+                                links: { self: "#" },
+                            },
+                            {
+                                type: "test",
+                                id: "5",
+                                attributes: {
+                                    address: "124 Main St",
                                     phone: "555-1234",
                                     preferences: ["coding", "reading"]
                                 },
@@ -105,33 +145,28 @@ export const ExpandableRows: StoryObj = {
                 },
                 {
                     type: "test",
-                    id: "2",
-                    attributes: {
-                        name: "Jane Smith",
-                        email: "jane@example.com",
-                        age: 25,
-                        // This row will not be expandable (no nested objects/arrays)
-                    },
-                    links: { self: "#" },
-                },
-                {
-                    type: "test",
                     id: "3",
                     attributes: {
                         name: "Bob Johnson",
                         email: "bob@example.com",
                         age: 42,
-                        // Add an array to make this row expandable
-                        orders: [
-                            { id: "ord-1", product: "Laptop", price: 1299 },
-                            { id: "ord-2", product: "Monitor", price: 499 }
-                        ]
+                        details: []
                     },
                     links: { self: "#" },
                 }
             ],
             metadata: {
                 columns: testColumns,
+                 // Add nested metadata for expandable rows
+                expandable: {
+                    details: {
+                        columns: [
+                            { field: "address", key: "Address", type: "text", sortable: true },
+                            { field: "phone", key: "Phone", type: "text", sortable: true },
+                            { field: "preferences", key: "Preferences", type: "array", sortable: false }
+                        ]
+                    }
+                }
             }
         };
 

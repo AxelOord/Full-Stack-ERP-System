@@ -13,10 +13,6 @@ import {
   getExpandedRowModel
 } from "@tanstack/react-table"
 import {
-  ChevronRight,
-  ChevronDown
-} from "lucide-react"
-import {
   Table,
   TableBody,
   TableCell,
@@ -24,11 +20,10 @@ import {
   TableHeader,
   TableRow,
 } from "./table"
-import React, { Suspense, useMemo } from "react"
+import React, { Suspense } from "react"
 import { createColumns } from "@/components/table/columns"
 import { ApiData, Link, PaginatedResponse } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton"
-import { Button } from "@/components/ui/Button"
 import Loader from "@/components/shared/loader"
 import TableToolbar from "@/components/table/table-toolbar"
 import Pagination from "@/components/table/pagination"
@@ -193,11 +188,13 @@ DataTable.Content = function DataTableContent<T extends object>({
     getRowCanExpand: (row) => {
       const attributes = row.original?.attributes;
       if (!attributes) return false;
-  
-      return Object.values(attributes).some(value =>
-        (Array.isArray(value) && value.length > 0) ||
-        (typeof value === 'object' && value !== null && Object.keys(value).length > 0)
-      );
+      
+      const expandableMetadata = data?.metadata?.expandable || {};
+      const expandableFields = Object.keys(expandableMetadata);
+      
+      if (expandableFields.length === 0) return false;
+      
+      return true
     },
     state: {
       columnFilters,
@@ -481,7 +478,7 @@ interface DataTableCellProps {
 }
 
 DataTable.Cell = function DataTableCell({
-  cell,
+  cell: any, // FIXME: no any's!
   children,
 }: DataTableCellProps) {
   return (
@@ -491,28 +488,58 @@ DataTable.Cell = function DataTableCell({
   );
 };
 
-// add expandable row to metadata from the backend
+interface ExpandedContentProps {
+  row: any; // FIXME: no any's!
+  children?: React.ReactNode;
+}
+
 DataTable.ExpandedContent = function ExpandedContent({
   row,
   children
-}) {
-  const originalData = row.original;
+} : ExpandedContentProps) {
+  // Get the metadata from the context instead of the row
+  const { data } = useDataTable();
+  const expandableMetadata = data?.metadata?.expandable || {};
 
+  const key = Object.keys(expandableMetadata)[0];
+  const value = row.original?.attributes?.[key];
+  
+  // Format the nested data for the DataTable
+  const nestedData = {
+    data: Array.isArray(value) ? value.map((item, index) => ({
+      type: item.type || key,
+      id: item.id || index,
+      attributes: item.attributes || item,
+      links: { self: "#" }
+    })) : [],
+    metadata:  expandableMetadata[key] || [],
+    links: {
+      self: {
+        href: "#",
+        method: "GET",
+        rel: "self",
+      }
+    },
+  };
+
+  console.log("Nested Data:", nestedData);
+  
   return (
-    <div className="p-4">
-      <pre className="text-sm">
-        {JSON.stringify(
-          Object.fromEntries(
-            Object.entries(originalData?.attributes || {}).filter(
-              ([key, value]) => 
-                Array.isArray(value) || 
-                (value && typeof value === 'object' && !Array.isArray(value))
-            )
-          ),
-          null, 
-          2
-        )}
-      </pre>
+    <div className="pl-14 pr-4 py-4 bg-muted/20">
+      {children || (
+        <div className="bg-white border rounded-lg shadow-sm">
+          <DataTable>
+            <DataTable.Content data={nestedData}>
+              <DataTable.Toolbar />
+              <DataTable.Container>
+                <DataTable.Header />
+                <DataTable.Body />
+              </DataTable.Container>
+            </DataTable.Content>
+            <DataTable.Pagination />
+          </DataTable>
+        </div>
+      )}
     </div>
   );
 };

@@ -106,10 +106,10 @@ To create and apply migrations for a module:
 
 ```bash
 # Create a migration
-dotnet ef migrations add InitialMigration --project src/Modules/ModuleName/Persistence --startup-project src/App
+Add-Migration MigrationName -Project ModuleName.Persistence -StartupProject App
 
 # Apply migrations
-dotnet ef database update --project src/Modules/ModuleName/Persistence --startup-project src/App
+Update-Database -Project ModuleName.Persistence -StartupProject App
 ```
 
 ## Automatic Migrations on Startup

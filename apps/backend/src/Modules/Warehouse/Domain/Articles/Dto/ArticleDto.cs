@@ -26,4 +26,7 @@ public class ArticleDto : IDto
     [DataType("boolean")]
     [Sortable(false)]
     public bool IsActive { get; set; }
+
+    [Expandable]
+    public List<ApiData<ArticleVariantDto>> Variants { get; set; } = new();
 }

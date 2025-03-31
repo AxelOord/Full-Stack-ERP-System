@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 
 namespace Shared.Results.Response;
@@ -6,10 +7,58 @@ public static class MetadataGenerator
 {
     public static Metadata GenerateMetadata<T>()
     {
-        var metadata = new Metadata();
-        var columns = new List<Column>();
-
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        var metadata = new Metadata
+        {
+            Columns = GetColumns(properties.Where(p => p.GetCustomAttribute<ExpandableAttribute>() == null).ToArray()),
+            Expandable = GetExpandableMetadata(properties)
+        };
+
+        return metadata;
+    }
+
+    private static Dictionary<string, Metadata> GetExpandableMetadata(PropertyInfo[] properties)
+    {
+        var expandableMetadata = new Dictionary<string, Metadata>();
+
+        foreach (var prop in properties.Where(p => p.GetCustomAttribute<ExpandableAttribute>() != null))
+        {
+            Type nestedType = prop.PropertyType;
+
+            if (typeof(IEnumerable).IsAssignableFrom(nestedType) && nestedType.IsGenericType)
+            {
+                Type itemType = nestedType.GetGenericArguments()[0];
+
+                if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(ApiData<>))
+                {
+                    nestedType = itemType.GetGenericArguments()[0];
+                }
+                else
+                {
+                    nestedType = itemType;
+                }
+            }
+
+            else if (nestedType.IsGenericType && nestedType.GetGenericTypeDefinition() == typeof(ApiData<>))
+            {
+                nestedType = nestedType.GetGenericArguments()[0];
+            }
+
+            var nestedProperties = nestedType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            var nestedColumns = GetColumns(nestedProperties);
+
+            string fieldName = $"{char.ToLowerInvariant(prop.Name[0])}{prop.Name[1..]}";
+            expandableMetadata[fieldName] = new Metadata { Columns = nestedColumns };
+        }
+
+        return expandableMetadata;
+    }
+
+    private static List<Column> GetColumns(PropertyInfo[] properties)
+    {
+        var columns = new List<Column>();
 
         foreach (var prop in properties)
         {
@@ -34,8 +83,7 @@ public static class MetadataGenerator
             columns.Add(column);
         }
 
-        metadata.Columns = columns;
-        return metadata;
+        return columns;
     }
 
     private static string DetermineType(Type propertyType)

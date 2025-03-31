@@ -26,3 +26,9 @@ public class FilterPathAttribute(string path) : Attribute
 {
     public string Path { get; } = path;
 }
+
+[AttributeUsage(AttributeTargets.Property)]
+public class ExpandableAttribute : Attribute
+{
+    public ExpandableAttribute() { }
+}

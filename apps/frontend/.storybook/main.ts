@@ -1,5 +1,8 @@
 import { dirname, join } from "path";
 import type { StorybookConfig } from "@storybook/experimental-nextjs-vite";
+import { config as loadEnv } from 'dotenv';
+
+loadEnv({ path: join(__dirname, `.env.${process.env.STORYBOOK_ENV || 'local'}`) });
 
 const config: StorybookConfig = {
   stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
@@ -13,7 +16,15 @@ const config: StorybookConfig = {
   },
   previewAnnotations: [
     './.storybook/preview.tsx',
-  ]
+  ],
+
+  viteFinal: async (config) => {
+    config.define = {
+      ...config.define,
+      'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_API_BASE_URL),
+    };
+    return config;
+  }
 };
 
 export default config;
